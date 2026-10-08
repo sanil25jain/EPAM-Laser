@@ -1,8 +1,8 @@
-# EPAM LASER 🚀
+# EPAM Laser 🚀
 
-### EPAM CoE – One-Year Project Development Program
+### EPAM CoE – One Year Project Development Program
 
-Welcome to the official repository of **Team EPAM LASER**, a student development team participating in the **EPAM Systems Center of Excellence (CoE) – One-Year Project Development Program**.
+Welcome to the official repository of **Team EPAM LASER**, a student development team participating in the **EPAM Systems Center of Excellence (CoE) – One Year Project Development Program**.
 
 ### 👥 Team Members
 
@@ -12,7 +12,7 @@ Welcome to the official repository of **Team EPAM LASER**, a student development
 - Radhika Shukla
 - Prerna Kanani
 - Vaishnavi Dugaya
-- Vaishnai Gaur
+- Vaishnavi Gaur
 - Ananya Yadav
 - Dhruv Lodhi
 - Ayush Jha
