@@ -9,7 +9,7 @@ This repository demonstrates how multithreaded programs interact with shared mem
 | Property | Details |
 |---|---|
 | **Task Name** | Race Condition, Instruction Reordering & Memory Model |
-| **Assigned Members** | Sanil & Radhika |
+| **Assigned Members** | Sanil Jain, Radhika Shukla & Paras Dubey|
 | **CPU** | Apple M1 |
 | **Operating System** | macOS 26.6.2 (Build 25G83) |
 | **JDK** | OpenJDK 21.0.12.1 (Homebrew) |
@@ -100,14 +100,12 @@ Without `volatile` or another suitable synchronization mechanism, the Java Memor
 ## References
 
 1. **Oracle** — [Java Language Specification, Chapter 17: Threads and Locks](https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html)
-2. **Vlad Zuev** — *Java Multithreading, Lesson 59: Java Memory Model*
-3. **EverythingAboutJava** — *Happens-Before Relationship in Java*
+2. **Vlad Zuev** — [Java Multithreading, Lesson 59: Java Memory Model](https://youtu.be/EDGjm6zmass?si=ybqdLgaeu7w4Q_th)
+3. **EverythingAboutJava** — [Happens-Before Relationship in Java](https://youtu.be/W-1Te6Bl-p8?si=w5c8swoiHAtUmK4c)
 
 ## Contributors
 
-- **Sanil**
-- **Radhika**
-
+- **Sanil Jain**
+- **Radhika Shukla**
+- **Paras Dubey**
 ---
-
-*This project explores practical concurrency problems and Java Memory Model guarantees through experiments, observations, and synchronization techniques.*
