@@ -1,0 +1,7 @@
+{"id":"K8S-EVT-001","ts":"2026-10-14T08:00:00.000Z","type":"SuccessfulCreate","object":"deployment/checkout-service","namespace":"checkout","message":"Created new campaign-worker pod"}
+{"id":"K8S-EVT-002","ts":"2026-10-14T11:13:00.000Z","type":"Warning","object":"deployment/checkout-service","namespace":"checkout","message":"checkout-service readiness probe latency elevated"}
+{"id":"K8S-EVT-003","ts":"2026-10-14T11:18:00.000Z","type":"Warning","object":"deployment/checkout-service","namespace":"checkout","message":"checkout-service readiness probe failed: request timed out"}
+{"id":"K8S-EVT-004","ts":"2026-10-14T11:25:00.000Z","type":"Warning","object":"deployment/checkout-service","namespace":"checkout","message":"checkout-service pod remains Running but readiness degraded"}
+{"id":"K8S-EVT-005","ts":"2026-10-14T11:51:00.000Z","type":"Normal","object":"deployment/checkout-service","namespace":"checkout","message":"RollingUpdate started for checkout-service 3.18.1"}
+{"id":"K8S-EVT-006","ts":"2026-10-14T11:58:00.000Z","type":"Normal","object":"deployment/checkout-service","namespace":"checkout","message":"Deployment checkout-service successfully rolled out"}
+{"id":"K8S-EVT-007","ts":"2026-10-14T12:01:00.000Z","type":"Normal","object":"deployment/checkout-service","namespace":"checkout","message":"Old checkout-service pods terminated after connection drain"}

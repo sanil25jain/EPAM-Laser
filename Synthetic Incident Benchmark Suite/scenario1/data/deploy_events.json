@@ -1,0 +1,80 @@
+[
+  {
+    "id": "DEP-001",
+    "ts": "2026-09-17T14:09:12.000Z",
+    "system": "argocd",
+    "app": "marketing-banner-service",
+    "env": "prod",
+    "revision": "v2.31.0",
+    "result": "Synced/Healthy",
+    "note": "unrelated"
+  },
+  {
+    "id": "DEP-002",
+    "ts": "2026-09-17T14:09:40.000Z",
+    "system": "github",
+    "event": "merge",
+    "pr": 1893,
+    "commit": "3be91f7",
+    "bypass": true
+  },
+  {
+    "id": "DEP-003",
+    "ts": "2026-09-17T14:09:55.000Z",
+    "system": "ci",
+    "pipeline": "platform-config",
+    "stages": [
+      {
+        "name": "unit-tests",
+        "result": "skipped (reused from PR)"
+      },
+      {
+        "name": "config-schema-validate",
+        "result": "skipped (path filter)"
+      },
+      {
+        "name": "publish-manifests",
+        "result": "success"
+      }
+    ]
+  },
+  {
+    "id": "DEP-004",
+    "ts": "2026-09-17T14:11:32.000Z",
+    "system": "argocd",
+    "app": "checkout-config",
+    "env": "prod",
+    "revision": "3be91f7",
+    "result": "Synced/Healthy",
+    "note": "ArgoCD reports Healthy because ConfigMaps have no health check; Deployment spec/image unchanged"
+  },
+  {
+    "id": "DEP-005",
+    "ts": "2026-09-17T14:11:40.000Z",
+    "system": "argocd",
+    "app": "checkout-config",
+    "env": "staging",
+    "revision": "3be91f7",
+    "result": "Synced/Healthy",
+    "note": "staging value was a valid '50'"
+  },
+  {
+    "id": "DEP-006",
+    "ts": "2026-09-17T14:40:10.000Z",
+    "system": "github",
+    "event": "merge",
+    "pr": 1896,
+    "commit": "c71d0e2",
+    "bypass": false
+  },
+  {
+    "id": "DEP-007",
+    "ts": "2026-09-17T14:41:12.000Z",
+    "system": "argocd",
+    "app": "checkout-config",
+    "env": "prod",
+    "revision": "c71d0e2",
+    "result": "Synced/Healthy",
+    "trigger": "manual sync by dmitri.volkov"
+  }
+]

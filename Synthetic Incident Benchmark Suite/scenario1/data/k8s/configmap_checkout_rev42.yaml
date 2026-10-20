@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: checkout-config
+  namespace: checkout
+  labels: {app: checkout-service, env: prod}
+  annotations:
+    config-revision: "42"
+    git-commit: 3be91f7
+data:
+  checkout.env: |
+    CHECKOUT_DB_HOST=pg-orders-primary.db.svc.cluster.local
+    CHECKOUT_DB_NAME=orders
+    CHECKOUT_DB_POOL_MAX=5O
+    CHECKOUT_DB_POOL_MIN=5
+    SESSION_TTL_SECONDS=1800
+    PAYMENT_ADAPTER_URL=http://payment-adapter.payments.svc.cluster.local:8080
+    FEATURE_FESTIVE_PRICING=true
+    CONFIG_HOT_RELOAD=true

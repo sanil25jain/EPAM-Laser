@@ -1,0 +1,50 @@
+[
+  {
+    "id": "DEP-001",
+    "ts": "2026-10-12T08:35:00.000Z",
+    "service": "checkout-service",
+    "env": "prod",
+    "event": "deployment_completed",
+    "version": "3.18.0",
+    "commit": "7ac91fe",
+    "replicas": 6
+  },
+  {
+    "id": "DEP-002",
+    "ts": "2026-10-14T08:00:00.000Z",
+    "service": "campaign-worker",
+    "env": "prod",
+    "event": "deployment_completed",
+    "version": "1.12.2",
+    "commit": "c8a2bd1",
+    "note": "concurrency 40 -> 44; unrelated small traffic stimulus"
+  },
+  {
+    "id": "DEP-003",
+    "ts": "2026-10-14T11:51:00.000Z",
+    "service": "checkout-service",
+    "env": "prod",
+    "event": "deployment_started",
+    "version": "3.18.1",
+    "commit": "91fbd21",
+    "note": "connection cleanup fix"
+  },
+  {
+    "id": "DEP-004",
+    "ts": "2026-10-14T11:58:00.000Z",
+    "service": "checkout-service",
+    "env": "prod",
+    "event": "deployment_completed",
+    "version": "3.18.1",
+    "commit": "91fbd21",
+    "replicas_ready": 6
+  },
+  {
+    "id": "DEP-005",
+    "ts": "2026-10-14T12:01:00.000Z",
+    "service": "checkout-service",
+    "env": "prod",
+    "event": "connection_pool_recycle",
+    "note": "graceful rolling restart drains leaked pool state"
+  }
+]

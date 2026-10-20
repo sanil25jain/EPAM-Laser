@@ -1,0 +1,69 @@
+{
+  "repo": "shopsphere/payment-adapter",
+  "pull_requests": [
+    {
+      "id": "GIT-PR-1998",
+      "number": 1998,
+      "title": "PAY-455: bump Apache HttpClient 5.2.1 -> 5.3.1 (security patch)",
+      "author": "karan.malhotra",
+      "merged_at": "2026-10-08T08:49:00.000Z",
+      "merge_commit": "5a1e9c3",
+      "reviews": [
+        {
+          "reviewer": "priya.nair",
+          "state": "APPROVED"
+        },
+        {
+          "reviewer": "dmitri.volkov",
+          "state": "APPROVED"
+        }
+      ],
+      "approvals_at_merge": 2,
+      "branch_protection_bypass": {
+        "used": false
+      },
+      "checks": [
+        {
+          "name": "unit-tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "integration-vs-paygate-sandbox",
+          "conclusion": "success",
+          "note": "sandbox still serves OLD chain until 2026-10-22, so it cannot detect the R2 trust gap"
+        }
+      ],
+      "note": "Properly reviewed, unrelated to TLS trust roots (DECOY: deployed 08:52, 12 min before first error)"
+    },
+    {
+      "id": "GIT-PR-2011",
+      "number": 2011,
+      "title": "INC-2026-1008: add PayGate Root R2 to truststore (ConfigMap-mounted)",
+      "author": "dmitri.volkov",
+      "merged_at": "2026-10-08T09:44:40.000Z",
+      "merge_commit": "9d3e7f1",
+      "reviews": [
+        {
+          "reviewer": "priya.nair",
+          "state": "APPROVED",
+          "ts": "2026-10-08T09:43:30.000Z"
+        },
+        {
+          "reviewer": "karan.malhotra",
+          "state": "APPROVED",
+          "ts": "2026-10-08T09:43:55.000Z"
+        }
+      ],
+      "approvals_at_merge": 2,
+      "note": "R2 fingerprint 4A:49:75:24:E0:A5:B4:B7:93:4F:06:D9:B5:5E:5D:76:6C:17:66:E4:95:8D:7F:DE:1D:6C:81:CD:C0:DD:99:E0 verified out-of-band with PayGate support ticket PGS-88213"
+    },
+    {
+      "id": "GIT-PR-1990",
+      "number": 1990,
+      "title": "notification: retry template fix",
+      "author": "priya.nair",
+      "merged_at": "2026-10-08T06:30:00.000Z",
+      "note": "unrelated noise"
+    }
+  ]
+}

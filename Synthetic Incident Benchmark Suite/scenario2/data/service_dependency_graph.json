@@ -1,0 +1,72 @@
+{
+  "services": [
+    {
+      "name": "api-gateway",
+      "tier": "edge"
+    },
+    {
+      "name": "checkout-service",
+      "tier": "core"
+    },
+    {
+      "name": "payment-adapter",
+      "tier": "core",
+      "runtime": "Java 17",
+      "replicas_prod": 4,
+      "trust": "custom baked JKS truststore (R1 only)"
+    },
+    {
+      "name": "inventory-service",
+      "tier": "core"
+    },
+    {
+      "name": "redis-cache",
+      "tier": "data"
+    },
+    {
+      "name": "postgres-orders",
+      "tier": "data"
+    },
+    {
+      "name": "notification-service",
+      "tier": "peripheral"
+    },
+    {
+      "name": "paygate",
+      "tier": "third-party",
+      "edges": [
+        "203.0.113.41",
+        "203.0.113.42",
+        "203.0.113.43",
+        "203.0.113.44"
+      ]
+    }
+  ],
+  "calls": [
+    [
+      "api-gateway",
+      "checkout-service"
+    ],
+    [
+      "checkout-service",
+      "payment-adapter"
+    ],
+    [
+      "payment-adapter",
+      "paygate"
+    ],
+    [
+      "checkout-service",
+      "redis-cache"
+    ],
+    [
+      "checkout-service",
+      "postgres-orders"
+    ],
+    [
+      "api-gateway",
+      "inventory-service"
+    ]
+  ],
+  "notes": "staging payment-adapter talks to PayGate SANDBOX (old chain until 2026-10-22). redis-cache and NAT are shared infrastructure but not on a TLS-trust path."
+}

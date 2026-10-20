@@ -1,0 +1,64 @@
+{
+  "emails": [
+    {
+      "id": "EML-001",
+      "date": "2026-08-24T10:02:11Z",
+      "from": "security-notices@paygate.example",
+      "to": "payments-vendor-alerts@shopsphere.example",
+      "subject": "[Action may be required] PayGate TLS certificate chain migration - effective 2026-10-08",
+      "body": "PayGate is migrating api.paygate.example to a new certificate chain: leaf issued by 'PayGate Issuing CA G3' under new root 'PayGate Global Root R2'. Rollout is rolling across edge nodes during the maintenance window 2026-10-08 09:00-11:00 UTC. Customers using the operating-system or browser trust store need no action. Customers who PIN certificates or maintain a CUSTOM TRUSTSTORE must add Root R2 (SHA-256 fingerprint published at https://pki.paygate.example/r2) before 2026-10-08. Sandbox migrates on 2026-10-22.",
+      "delivered": true,
+      "read_by": []
+    },
+    {
+      "id": "EML-002",
+      "date": "2026-09-24T10:00:03Z",
+      "from": "security-notices@paygate.example",
+      "to": "payments-vendor-alerts@shopsphere.example",
+      "subject": "Reminder: PayGate TLS chain migration in 14 days",
+      "body": "Reminder of EML-001. Pinned/custom-truststore clients must add Root R2 before 2026-10-08.",
+      "delivered": true,
+      "read_by": []
+    }
+  ],
+  "mailbox_metadata": {
+    "address": "payments-vendor-alerts@shopsphere.example",
+    "type": "shared distribution list",
+    "members": [
+      {
+        "user": "sunil.arora",
+        "status": "left company 2026-06-30"
+      }
+    ],
+    "monitored_by_oncall": false,
+    "last_read": "2026-06-29T16:40:00Z",
+    "offboarding_ticket": "VEN-52 (closed: 'no action - alias auto-forwards' - it did not)"
+  },
+  "status_page": [
+    {
+      "id": "SP-001",
+      "posted": "2026-10-01T09:00:00Z",
+      "title": "Scheduled maintenance: TLS certificate chain update",
+      "body": "Window 2026-10-08 09:00-11:00 UTC. Impact: none expected. Customers using standard public trust stores need no action."
+    },
+    {
+      "id": "SP-002",
+      "posted": "2026-10-08T09:00:00Z",
+      "status": "In progress"
+    },
+    {
+      "id": "SP-003",
+      "posted": "2026-10-08T09:26:40Z",
+      "status": "Completed",
+      "body": "Maintenance completed successfully. All systems operational."
+    }
+  ],
+  "vendor_changelog": [
+    {
+      "date": "2026-08-24",
+      "title": "TLS chain migration (R2)",
+      "text": "Pinned-cert and custom-truststore clients must add Root R2 before 2026-10-08."
+    }
+  ],
+  "paygate_api_status_during_incident": "100% green; API latency normal for clients with updated trust stores"
+}

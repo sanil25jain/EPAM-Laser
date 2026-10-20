@@ -1,0 +1,72 @@
+[
+  {
+    "id": "meera.iyer",
+    "name": "Meera Iyer",
+    "role": "Senior SRE (primary on-call)",
+    "tenure_years": 6,
+    "seniority": "senior"
+  },
+  {
+    "id": "dmitri.volkov",
+    "name": "Dmitri Volkov",
+    "role": "Staff Engineer, Platform",
+    "tenure_years": 8,
+    "seniority": "staff"
+  },
+  {
+    "id": "priya.nair",
+    "name": "Priya Nair",
+    "role": "Senior Software Engineer, Payments CODEOWNER",
+    "tenure_years": 5,
+    "seniority": "senior"
+  },
+  {
+    "id": "karan.malhotra",
+    "name": "Karan Malhotra",
+    "role": "Payments Engineering Lead",
+    "tenure_years": 4,
+    "seniority": "lead"
+  },
+  {
+    "id": "isha.bose",
+    "name": "Isha Bose",
+    "role": "Vendor & Partner Manager",
+    "tenure_years": 2,
+    "seniority": "mid"
+  },
+  {
+    "id": "tara.menon",
+    "name": "Tara Menon",
+    "role": "Product Manager, Payments",
+    "tenure_years": 3,
+    "seniority": "mid"
+  },
+  {
+    "id": "sana.qureshi",
+    "name": "Sana Qureshi",
+    "role": "Incident Commander (duty manager)",
+    "tenure_years": 4,
+    "seniority": "manager"
+  },
+  {
+    "id": "neha.kapoor",
+    "name": "Neha Kapoor",
+    "role": "Customer Support Lead",
+    "tenure_years": 3,
+    "seniority": "lead"
+  },
+  {
+    "id": "sunil.arora",
+    "name": "Sunil Arora",
+    "role": "Former Vendor Manager (left 2026-06-30)",
+    "tenure_years": 5,
+    "seniority": "former"
+  },
+  {
+    "id": "leo.fischer",
+    "name": "Leo Fischer",
+    "role": "PayGate Technical Account Manager (external)",
+    "tenure_years": null,
+    "seniority": "external"
+  }
+]

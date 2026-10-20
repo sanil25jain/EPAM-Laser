@@ -1,0 +1,384 @@
+[
+  {
+    "id": "SLK-0001",
+    "ts": "1789653492.000001",
+    "iso": "2026-09-17T13:58:12.000Z",
+    "channel": "#platform-dev",
+    "user": "arjun.mehta",
+    "text": "@priya.nair PR #1893 is ready: bumps checkout DB pool 20->50 + session TTL for the festive sale. Can you review? Sale freeze starts 15:00 UTC.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0002",
+    "ts": "1789653520.000002",
+    "iso": "2026-09-17T13:58:40.000Z",
+    "channel": "#platform-dev",
+    "user": "priya.nair",
+    "text": "In the capacity review till 14:30, will pick it up right after.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0003",
+    "ts": "1789653785.000003",
+    "iso": "2026-09-17T14:03:05.000Z",
+    "channel": "#platform-dev",
+    "user": "arjun.mehta",
+    "text": "If this misses the freeze we run the sale on pool=20, and the load test saturated at ~18k concurrent. Any other reviewer who can look?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0004",
+    "ts": "1789653930.000004",
+    "iso": "2026-09-17T14:05:30.000Z",
+    "channel": "#platform-dev",
+    "user": "vikram.rao",
+    "text": "Pool bump is trivial, it's a config value. I'll take responsibility and merge with admin override. Arjun, mark the ticket done and watch the dashboards after.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0005",
+    "ts": "1789653970.000005",
+    "iso": "2026-09-17T14:06:10.000Z",
+    "channel": "#platform-dev",
+    "user": "arjun.mehta",
+    "text": "Ok moving PLAT-4821 to Done. Staging looked fine.",
+    "thread_ts": null,
+    "reactions": [
+      "+1"
+    ]
+  },
+  {
+    "id": "SLK-0006",
+    "ts": "1789654152.000006",
+    "iso": "2026-09-17T14:09:12.000Z",
+    "channel": "#deployments",
+    "user": "argocd-bot",
+    "text": "marketing-banner-service (prod) Synced v2.31.0 Healthy",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0007",
+    "ts": "1789654195.000007",
+    "iso": "2026-09-17T14:09:55.000Z",
+    "channel": "#deployments",
+    "user": "github-bot",
+    "text": "PR #1893 merged by vikram.rao into main (3be91f7). WARNING: merged with branch-protection bypass; 0/1 required approvals.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0008",
+    "ts": "1789654292.000008",
+    "iso": "2026-09-17T14:11:32.000Z",
+    "channel": "#deployments",
+    "user": "argocd-bot",
+    "text": "checkout-config (prod) Synced rev 3be91f7 Healthy",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0009",
+    "ts": "1789654522.000009",
+    "iso": "2026-09-17T14:15:22.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "pagerduty-bot",
+    "text": "TRIGGERED SEV2: checkout availability SLO burn, api-gateway 5xx > 5% (prod-aps1)",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0010",
+    "ts": "1789654625.000010",
+    "iso": "2026-09-17T14:17:05.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "Ack. Looking now.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0011",
+    "ts": "1789654710.000011",
+    "iso": "2026-09-17T14:18:30.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "kubectl get pods -n checkout -> checkout-service 3/3 Running, 0 restarts, AGE 2d. Pods look healthy.\n```\nNAME                                READY   STATUS    RESTARTS   AGE\ncheckout-service-5f8c6b7d44-2gk9x   1/1     Running   0          2d\ncheckout-service-5f8c6b7d44-7wq4t   1/1     Running   0          2d\ncheckout-service-5f8c6b7d44-ndv5c   1/1     Running   0          2d\n```",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0012",
+    "ts": "1789654790.000012",
+    "iso": "2026-09-17T14:19:50.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "Grafana checkout dashboard also normal, p95 flat ~120ms. Maybe it's the gateway or network?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0013",
+    "ts": "1789654880.000013",
+    "iso": "2026-09-17T14:21:20.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "I rolled back and restarted checkout-service to clear any stuck connections. Pods are back Running, should recover shortly.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0014",
+    "ts": "1789654965.000014",
+    "iso": "2026-09-17T14:22:45.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "sana.qureshi",
+    "text": "SLO burn still climbing, 5xx at ~38% of all traffic. I'm IC. Need more eyes on this.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0015",
+    "ts": "1789655010.000015",
+    "iso": "2026-09-17T14:23:30.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "neha.kapoor",
+    "text": "Support: 300+ tickets in 8 minutes. 'payment failed', 'cart stuck' on web and app.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0016",
+    "ts": "1789655050.000016",
+    "iso": "2026-09-17T14:24:10.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "meera.iyer",
+    "text": "Joining. Checking the DB side first.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0017",
+    "ts": "1789655200.000017",
+    "iso": "2026-09-17T14:26:40.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "meera.iyer",
+    "text": "Postgres connections dropped ~210 -> ~170 right after the 14:10 snapshot backup. I've seen snapshot jobs stall app pools before. I'm ~90% sure this is DB-side.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0018",
+    "ts": "1789655235.000018",
+    "iso": "2026-09-17T14:27:15.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "dmitri.volkov",
+    "text": "I don't think so. Snapshot backups take no locks (PLAT-4799). The connection drop is an effect: clients vanished. In prod checkout logs I see: invalid CHECKOUT_DB_POOL_MAX: strconv.Atoi: parsing \"5O\". It's config, not DB.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0019",
+    "ts": "1789655285.000019",
+    "iso": "2026-09-17T14:28:05.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "meera.iyer",
+    "text": "Dmitri, the PR bumped the pool 20->50, that's a number. Is your Loki query hitting staging? Rahul says all pods are Running.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0020",
+    "ts": "1789655320.000020",
+    "iso": "2026-09-17T14:28:40.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "dmitri.volkov",
+    "text": "My query is {cluster=\"prod-aps1\", namespace=\"checkout\"}. Rahul, which cluster are you on?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0021",
+    "ts": "1789655350.000021",
+    "iso": "2026-09-17T14:29:10.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "priya.nair",
+    "text": "Just caught up. #1893 was mine to review and I never reviewed it. Arjun, how did it get merged?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0022",
+    "ts": "1789655390.000022",
+    "iso": "2026-09-17T14:29:50.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "arjun.mehta",
+    "text": "Vikram merged with override. Priya had said in standup it looked fine.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0023",
+    "ts": "1789655420.000023",
+    "iso": "2026-09-17T14:30:20.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "priya.nair",
+    "text": "I did not say that. I hadn't opened the PR.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0024",
+    "ts": "1789655465.000024",
+    "iso": "2026-09-17T14:31:05.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "Oh no. My kubectl context is stg-aps1. Everything I ran, including the restart, was on staging. Sorry.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0025",
+    "ts": "1789655500.000025",
+    "iso": "2026-09-17T14:31:40.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "vikram.rao",
+    "text": "I merged it with the override. I didn't expect a pool bump to take prod down. Ready to help.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0026",
+    "ts": "1789655540.000026",
+    "iso": "2026-09-17T14:32:20.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "Prod context now: checkout-service 0/6 Ready, all CrashLoopBackOff, restarts 6-9.\n```\ncheckout-service-7d9f8b6c5-4xk2p   0/1   CrashLoopBackOff   7   20m\ncheckout-service-7d9f8b6c5-8mnq7   0/1   CrashLoopBackOff   7   20m\n```",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0027",
+    "ts": "1789655620.000027",
+    "iso": "2026-09-17T14:33:40.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "sana.qureshi",
+    "text": "Status page updated: 'Checkout degraded'. What's the ETA?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0028",
+    "ts": "1789655665.000028",
+    "iso": "2026-09-17T14:34:25.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "Ran kubectl rollout undo in prod. No change, pods still crashlooping.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0029",
+    "ts": "1789655750.000029",
+    "iso": "2026-09-17T14:35:50.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "dmitri.volkov",
+    "text": "Image didn't change, the ConfigMap did. checkout-config rev 42 has CHECKOUT_DB_POOL_MAX=5O (letter O, not zero). Reverting the configmap hunk of #1893.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0030",
+    "ts": "1789655800.000030",
+    "iso": "2026-09-17T14:36:40.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "meera.iyer",
+    "text": "Retracting the DB theory: snapshot finished 14:12:52, pg healthy, 0 lock waits. Sorry for the detour.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0031",
+    "ts": "1789655880.000031",
+    "iso": "2026-09-17T14:38:00.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "dmitri.volkov",
+    "text": "Revert PR #1896 opened. Meera, please review.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0032",
+    "ts": "1789655970.000032",
+    "iso": "2026-09-17T14:39:30.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "meera.iyer",
+    "text": "Approved #1896.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0033",
+    "ts": "1789656080.000033",
+    "iso": "2026-09-17T14:41:20.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "dmitri.volkov",
+    "text": "Manually synced ArgoCD, configmap rev 43 applied (pool=20).",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0034",
+    "ts": "1789656150.000034",
+    "iso": "2026-09-17T14:42:30.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "dmitri.volkov",
+    "text": "Pods are stuck in 5-min crash backoff. Deleting them to skip it.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0035",
+    "ts": "1789656275.000035",
+    "iso": "2026-09-17T14:44:35.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "rahul.verma",
+    "text": "6/6 Ready.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0036",
+    "ts": "1789656360.000036",
+    "iso": "2026-09-17T14:46:00.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "sana.qureshi",
+    "text": "Checkout success rate ~97% and recovering.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0037",
+    "ts": "1789656450.000037",
+    "iso": "2026-09-17T14:47:30.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "sana.qureshi",
+    "text": "99.5% stable.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0038",
+    "ts": "1789656610.000038",
+    "iso": "2026-09-17T14:50:10.000Z",
+    "channel": "#inc-2026-0917-checkout",
+    "user": "sana.qureshi",
+    "text": "Resolved. PIR: PLAT-4830, owners Vikram + Arjun. Topics: bypass policy, config validation, on-call context safety.",
+    "thread_ts": null,
+    "reactions": []
+  }
+]

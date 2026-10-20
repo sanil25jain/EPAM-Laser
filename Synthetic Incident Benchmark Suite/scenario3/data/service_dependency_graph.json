@@ -1,0 +1,72 @@
+{
+  "graph_id": "shopsphere-prod-services-v3",
+  "nodes": [
+    {
+      "id": "api-gateway",
+      "type": "service",
+      "criticality": "tier-1"
+    },
+    {
+      "id": "checkout-service",
+      "type": "service",
+      "criticality": "tier-1"
+    },
+    {
+      "id": "orders-service",
+      "type": "service",
+      "criticality": "tier-1"
+    },
+    {
+      "id": "postgres-orders",
+      "type": "database",
+      "criticality": "tier-1"
+    },
+    {
+      "id": "inventory-service",
+      "type": "service",
+      "criticality": "tier-2"
+    },
+    {
+      "id": "payment-adapter",
+      "type": "service",
+      "criticality": "tier-1"
+    }
+  ],
+  "edges": [
+    {
+      "from": "api-gateway",
+      "to": "checkout-service",
+      "relation": "HTTP request",
+      "expected_p95_ms": 80
+    },
+    {
+      "from": "checkout-service",
+      "to": "orders-service",
+      "relation": "gRPC request",
+      "expected_p95_ms": 35
+    },
+    {
+      "from": "orders-service",
+      "to": "postgres-orders",
+      "relation": "PostgreSQL connection pool",
+      "pool_max": 80,
+      "pool_timeout_ms": 1500
+    },
+    {
+      "from": "checkout-service",
+      "to": "payment-adapter",
+      "relation": "HTTP request",
+      "expected_p95_ms": 250
+    },
+    {
+      "from": "checkout-service",
+      "to": "inventory-service",
+      "relation": "HTTP request",
+      "expected_p95_ms": 60
+    }
+  ],
+  "notes": [
+    "checkout-service and orders-service use separate pools; incident leak is in checkout-service's repository helper pool named orders-write-pool.",
+    "Postgres max_connections is 300; database CPU stays moderate during the incident."
+  ]
+}

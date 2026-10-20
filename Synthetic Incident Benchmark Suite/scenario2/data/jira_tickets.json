@@ -1,0 +1,61 @@
+[
+  {
+    "id": "JIRA-PAY-311",
+    "key": "PAY-311",
+    "type": "Task",
+    "summary": "Truststore is baked into the image; automate CA bundle refresh / load from ConfigMap",
+    "created": "2026-03-17T10:00:00.000Z",
+    "status": "Backlog",
+    "priority": "Medium",
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-PAY-388",
+    "key": "PAY-388",
+    "type": "Task",
+    "summary": "Route vendor notices to on-call mailbox / ticket queue",
+    "created": "2026-07-14T09:20:00.000Z",
+    "status": "Backlog",
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-VEN-52",
+    "key": "VEN-52",
+    "type": "Task",
+    "summary": "Offboarding: reassign Sunil Arora's shared mailboxes",
+    "created": "2026-06-30T12:00:00.000Z",
+    "status": "Closed",
+    "resolution_comment": "No action - alias auto-forwards.",
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-PAY-441",
+    "key": "PAY-441",
+    "type": "Task",
+    "summary": "Silence noisy payment-adapter error-rate monitor during 2.8.0 rollout",
+    "created": "2026-09-30T08:00:00.000Z",
+    "status": "Done",
+    "note": "Monitor 7712044 muted until 2026-10-15 and never un-muted",
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-PAY-455",
+    "key": "PAY-455",
+    "type": "Task",
+    "summary": "Bump Apache HttpClient (security patch)",
+    "created": "2026-10-02T09:00:00.000Z",
+    "status": "Done",
+    "linked_prs": [
+      "GIT-PR-1998"
+    ],
+    "note": "DECOY"
+  },
+  {
+    "id": "JIRA-PAY-470",
+    "key": "PAY-470",
+    "type": "Post-incident review",
+    "summary": "INC-2026-1008 PayGate TLS chain outage - post-mortem",
+    "created": "2026-10-08T10:30:00.000Z",
+    "status": "To Do"
+  }
+]

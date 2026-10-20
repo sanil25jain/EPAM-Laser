@@ -1,0 +1,74 @@
+{
+  "scenario_id": "S3-DATABASE-CONNECTION-LEAK",
+  "incident_id": "INC-2026-1014",
+  "seed": 3037,
+  "log_lines": 50000,
+  "metric_rows": 5712,
+  "apm_traces": 340,
+  "slack_messages": 24,
+  "k8s_events": 7,
+  "audit_entries": 2,
+  "monitor_alert_utc": "2026-10-14T11:13:00.000Z",
+  "files": {
+    "data/datadog_apm_traces.jsonl": {
+      "bytes": 244858,
+      "sha256": "8af77ab4af81fb973517d9da7790a24e982e22f8fffa158b44b7e39815739898"
+    },
+    "data/datadog_events_monitors.json": {
+      "bytes": 1954,
+      "sha256": "c46481844d2cab1c21ac7db0162db95d5d253c71898a9c3b311a2028174c162f"
+    },
+    "data/datadog_metrics.csv": {
+      "bytes": 435805,
+      "sha256": "df9904a105ef4cecf11ed1bf9030796432359dcac7f7ec7d70b1f93d88f091b1"
+    },
+    "data/deploy_events.json": {
+      "bytes": 1210,
+      "sha256": "32066fd319b2424916982f5825b094811d67d613f7afd0cc1f1d497ec6f56e63"
+    },
+    "data/git_prs.json": {
+      "bytes": 4080,
+      "sha256": "21aa41ee257c8e6cc727965d6ef4f28cab37461fd2633d35b567af7c93c47a7f"
+    },
+    "data/ground_truth.json": {
+      "bytes": 14874,
+      "sha256": "6e1fecf4ea5414d4ba016fcd800493d5a387a897f60838ae86e54631c91f2946"
+    },
+    "data/incident.json": {
+      "bytes": 1306,
+      "sha256": "477cc6504cf5ba23784b67b0c8214900d2ec436663c9219b816ebb20ae9e14a9"
+    },
+    "data/jira_tickets.json": {
+      "bytes": 2606,
+      "sha256": "746f3365635dfb8c5b4d75699fccbb40ad19b674d5cd672e268e2bd950439054"
+    },
+    "data/k8s/k8s_audit.jsonl": {
+      "bytes": 383,
+      "sha256": "b0289e645372a373e72ccb98e35119c7454791d065f3a24f5fd125d7c4042cc9"
+    },
+    "data/k8s/k8s_events.jsonl": {
+      "bytes": 1377,
+      "sha256": "3591c9d4a66c1e066e78b328dd50f98f71f905ad604db0d52674e9c213e0de9b"
+    },
+    "data/logs_raw.jsonl": {
+      "bytes": 10530312,
+      "sha256": "9550def68eec852e52ccd4eddd978fc16a004f4f34b0b588c2342bb6aed12c82"
+    },
+    "data/pagerduty_alerts.json": {
+      "bytes": 804,
+      "sha256": "7022a292dee39568ef0b6f5953b731eb36756ec1445251e2f579626e68cc3bcb"
+    },
+    "data/service_dependency_graph.json": {
+      "bytes": 1665,
+      "sha256": "2d540e332f41271bc612baf17753ba1f7bdb87672261dff2f00d6969fabb63d8"
+    },
+    "data/slack_messages.json": {
+      "bytes": 8030,
+      "sha256": "753e521047383baeafd76c2b6a0e15f8d63b93da9d311b65b7a9053bc11a14a6"
+    },
+    "data/users.json": {
+      "bytes": 1628,
+      "sha256": "53900a4ef40ed06fe08d94c51ba10a5ecca0253d50e475d17066a7f7084233f5"
+    }
+  }
+}

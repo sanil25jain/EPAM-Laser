@@ -1,0 +1,6 @@
+FROM eclipse-temurin:17-jre
+COPY target/payment-adapter.jar /app/payment-adapter.jar
+# PayGate truststore pinned in 2024 (PAY-311: automate refresh - still in backlog)
+COPY certs/paygate-truststore.jks /app/paygate-truststore.jks
+ENV JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=/app/paygate-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
+ENTRYPOINT ["java","-jar","/app/payment-adapter.jar"]

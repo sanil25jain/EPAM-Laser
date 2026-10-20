@@ -1,0 +1,422 @@
+{
+  "scenario_id": "S2-THIRD-PARTY-TLS-CHAIN",
+  "incident_id": "INC-2026-1008",
+  "company": "ShopSphere (fictional)",
+  "vendor": "PayGate (fictional)",
+  "incident_window_utc": {
+    "first_error": "2026-10-08T09:04:28.982Z",
+    "monitor_warn": "2026-10-08T09:08:30.000Z",
+    "monitor_alert": "2026-10-08T09:12:30.000Z",
+    "fully_failing": "2026-10-08T09:28:00.000Z",
+    "mitigated_all_pods_ready": "2026-10-08T09:49:40.000Z",
+    "monitor_recovered": "2026-10-08T09:52:30.000Z",
+    "resolved": "2026-10-08T10:05:20.000Z"
+  },
+  "mttd_seconds": 481,
+  "root_cause": {
+    "technical": "PayGate rolled api.paygate.example edge nodes to a new TLS chain (Issuing CA G3 under new Root R2) between 09:04 and 09:24 UTC. payment-adapter uses a custom baked JKS truststore containing only Root R1/G2, so new handshakes fail with PKIX path building failed. payment-adapter returns 502, checkout-service propagates it, api-gateway shows the 502 spike in Datadog.",
+    "organizational": "Vendor notices (Aug 24, Sep 24) went to a shared mailbox owned by an employee who left in June; offboarding ticket VEN-52 closed 'no action'. No process routes vendor notices to on-call.",
+    "latent_factors": [
+      "truststore baked into image, refresh never automated (PAY-311)",
+      "payment-adapter error-rate Datadog monitor muted until Oct 15 (PAY-441)",
+      "no monitor on handshake-failure rate or vendor chain changes",
+      "staging and CI integration tests use PayGate sandbox, which keeps the old chain until Oct 22",
+      "vendor status page said 'no customer action expected' (true only for default-trust clients)"
+    ]
+  },
+  "causal_dag": {
+    "nodes": [
+      {
+        "id": "N0",
+        "label": "Vendor notices sent to unmonitored shared mailbox (alias orphaned at offboarding)",
+        "type": "organizational",
+        "time": "2026-08-24T10:02:11.000Z",
+        "evidence": [
+          "EML-001",
+          "EML-002",
+          "JIRA-VEN-52"
+        ]
+      },
+      {
+        "id": "N1",
+        "label": "PayGate issues new leaf under Issuing CA G3 / Root R2",
+        "type": "vendor",
+        "time": "2026-10-07T21:14:09.000Z",
+        "evidence": [
+          "CT-001"
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "PayGate edge .41 serves new chain; then .42, .43, .44 (rolling)",
+        "type": "vendor",
+        "time": "2026-10-08T09:04:00.000Z",
+        "evidence": [
+          "cert_observations.edge_chain_observations",
+          "DDE-004",
+          "SP-002"
+        ]
+      },
+      {
+        "id": "N3",
+        "label": "payment-adapter truststore lacks Root R2 -> PKIX failure on handshake to switched edges",
+        "type": "technical",
+        "time": "2026-10-08T09:04:28.982Z",
+        "evidence": [
+          "L009034",
+          "CAP-001",
+          "k8s/truststore_before_keytool.txt"
+        ]
+      },
+      {
+        "id": "N4",
+        "label": "payment-adapter returns 502; circuit breaker opens",
+        "type": "technical",
+        "time": "2026-10-08T09:17:48.113Z",
+        "evidence": [
+          "L016075",
+          "metrics:payment_adapter.paygate.request.count{result:failure}"
+        ]
+      },
+      {
+        "id": "N5",
+        "label": "checkout-service /submit 502 -> api-gateway 502 spike (Datadog)",
+        "type": "symptom",
+        "time": "2026-10-08T08:51:36.773Z",
+        "evidence": [
+          "L008950",
+          "L005588",
+          "DDE-006",
+          "metrics:trace.http.request.errors{api-gateway,502}"
+        ]
+      },
+      {
+        "id": "N6",
+        "label": "checkout CPU up from retries; orders drop ~100% for card payments",
+        "type": "symptom",
+        "time": "2026-10-08T09:15:00.000Z",
+        "evidence": [
+          "metrics:container.cpu.usage_pct{checkout-service}",
+          "metrics:shopsphere.orders.completed"
+        ]
+      },
+      {
+        "id": "N7",
+        "label": "MTTR contributors: misattribution to 2.8.1 deploy, unfound vendor notice, out-of-band fingerprint verification, muted monitor",
+        "type": "mttr_contributor",
+        "time": "2026-10-08T09:16:30.000Z",
+        "evidence": [
+          "SLK-0006",
+          "DEP-002",
+          "DDM-7712044"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "N0",
+        "to": "N3",
+        "mechanism": "missed notice -> no truststore update before cutover",
+        "type": "enabling condition (not a physical mechanism)"
+      },
+      {
+        "from": "N1",
+        "to": "N2",
+        "mechanism": "leaf pre-issued then deployed per edge",
+        "expected_lag_s": [
+          3600,
+          86400
+        ]
+      },
+      {
+        "from": "N2",
+        "to": "N3",
+        "mechanism": "new handshakes to switched edge fail; pooled connections recycle (<=5 min)",
+        "expected_lag_s": [
+          0,
+          300
+        ],
+        "required_divergence": "paygate.edge.handshake_failure_rate{peer_ip} for that edge only",
+        "dose_response": "failure fraction steps 0 -> .25 -> .5 -> .75 -> 1.0 at switch times"
+      },
+      {
+        "from": "N3",
+        "to": "N4",
+        "mechanism": "SSLHandshakeException mapped to HTTP 502 by adapter; breaker opens at failure_rate > 50%",
+        "expected_lag_s": [
+          0,
+          10
+        ]
+      },
+      {
+        "from": "N4",
+        "to": "N5",
+        "mechanism": "502 propagated through checkout-service to gateway",
+        "expected_lag_s": [
+          0,
+          5
+        ],
+        "required_divergence": "errors on checkout-service and api-gateway 502, other routes unaffected"
+      },
+      {
+        "from": "N5",
+        "to": "N6",
+        "mechanism": "client/gateway retries add load; failed card payments",
+        "expected_lag_s": [
+          30,
+          300
+        ]
+      }
+    ]
+  },
+  "natural_experiments": [
+    {
+      "name": "rollback test",
+      "result": "reverting payment-adapter to 2.8.0 (09:22-09:23:30) did not change error rate -> deploy 2.8.1 is not causal",
+      "evidence": [
+        "DEP-002",
+        "metrics:trace.http.request.errors{payment-adapter}"
+      ]
+    },
+    {
+      "name": "dose-response by edge",
+      "result": "per-edge failure onset matches vendor switch times within ~4 min pool-recycle ramp",
+      "evidence": [
+        "metrics:payment_adapter.paygate.edge.handshake_failure_rate"
+      ]
+    },
+    {
+      "name": "fix by trust only",
+      "result": "failures vanish pod-by-pod exactly as pods with Root R2 become ready (09:47-09:51), no other change",
+      "evidence": [
+        "DEP-004",
+        "metrics:payment_adapter.truststore.pods_with_root_r2"
+      ]
+    },
+    {
+      "name": "same-pod split",
+      "result": "traces from the same pod succeed to unswitched edges and fail to switched ones",
+      "evidence": [
+        "datadog_apm_traces.jsonl"
+      ]
+    }
+  ],
+  "rejected_hypotheses": [
+    {
+      "id": "H-DEPLOY-2.8.1",
+      "claim": "payment-adapter 2.8.1 (HttpClient bump) caused TLS failures (Meera)",
+      "why_plausible": "deployed 08:52, 12 min before first error; error is TLS-related",
+      "falsified_by": [
+        "rollback to 2.8.0 did not help",
+        "errors began on one edge IP only, not on all connections post-deploy",
+        "no errors 08:52-09:04 on 2.8.1",
+        "error is PKIX unknown issuer, not protocol/cipher failure",
+        "PR #1998 changes no trust config"
+      ]
+    },
+    {
+      "id": "H-PAYGATE-OUTAGE",
+      "claim": "PayGate is down/flaky",
+      "falsified_by": [
+        "SYN/200 from public synthetics CAP-003",
+        "paygate.api.latency.p95 flat ~262ms for successful calls",
+        "status page green",
+        "failures are client-side trust errors"
+      ]
+    },
+    {
+      "id": "H-CERT-EXPIRED",
+      "claim": "PayGate certificate expired",
+      "falsified_by": [
+        "CAP-002: not_before 2026-10-07, not_after 2027-01-05",
+        "error is unknown issuer (code 20), not expiry (code 10)"
+      ]
+    },
+    {
+      "id": "H-NAT-PORTS",
+      "claim": "NAT gateway port exhaustion",
+      "falsified_by": [
+        "ErrorPortAllocation only 09:01-09:03, ended before errors scaled",
+        "errors are PKIX handshake errors, not connect timeouts",
+        "transient timeouts retried successfully"
+      ]
+    },
+    {
+      "id": "H-REDIS-EVICTION",
+      "claim": "Redis eviction storm",
+      "falsified_by": [
+        "evictions 08:58-09:00 recovered before first PKIX error",
+        "no cache dependency in payment authorize path"
+      ]
+    },
+    {
+      "id": "H-CHECKOUT-CPU",
+      "claim": "checkout-service CPU saturation is the cause",
+      "falsified_by": [
+        "CPU rises after 502 onset (retries)",
+        "topological demotion: anomalous ancestor payment-adapter errors earlier"
+      ]
+    }
+  ],
+  "human_testimony_claims": [
+    {
+      "claim_id": "C1",
+      "speaker": "meera.iyer",
+      "msg": "SLK-0006",
+      "claim": "2.8.1 deploy caused the TLS failures",
+      "truth": "FALSE (hypothesis; self-corrected after rollback test)",
+      "refuted_by": [
+        "DEP-002"
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "speaker": "karan.malhotra",
+      "msg": "SLK-0007",
+      "claim": "2.8.1 passed review and tests against sandbox",
+      "truth": "TRUE but not exculpatory evidence for prod: sandbox keeps the old chain",
+      "supported_by": [
+        "GIT-PR-1998"
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "speaker": "karan.malhotra",
+      "msg": "SLK-0007",
+      "claim": "PayGate status page is green",
+      "truth": "TRUE but irrelevant: API healthy for clients that trust R2"
+    },
+    {
+      "claim_id": "C4",
+      "speaker": "tara.menon",
+      "msg": "SLK-0010",
+      "claim": "PayGate flaky all week",
+      "truth": "FALSE: no PayGate errors or latency change before 09:04",
+      "refuted_by": [
+        "metrics:paygate.api.latency.p95",
+        "logs before 09:04"
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "speaker": "dmitri.volkov",
+      "msg": "SLK-0013",
+      "claim": "Failure is a trust problem",
+      "truth": "TRUE",
+      "supported_by": [
+        "L009034",
+        "CAP-001",
+        "CAP-002"
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "speaker": "isha.bose",
+      "msg": "SLK-0016",
+      "claim": "No notice from PayGate",
+      "truth": "Sincere but wrong: notices were sent to an unmonitored alias",
+      "refuted_by": [
+        "EML-001",
+        "EML-002"
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "speaker": "karan.malhotra",
+      "msg": "SLK-0017",
+      "claim": "Remembers an email about TLS changes",
+      "truth": "TRUE (low-certainty recollection, later verified)",
+      "supported_by": [
+        "EML-001"
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "speaker": "leo.fischer",
+      "msg": "SLK-0020",
+      "claim": "No customer action expected",
+      "truth": "MISLEADING: contradicts vendor's own EML-001 which requires action for custom truststores",
+      "refuted_by": [
+        "EML-001",
+        "vendor_changelog"
+      ]
+    }
+  ],
+  "mttr_contributors": [
+    {
+      "factor": "anchoring on own 2.8.1 deploy + ineffective rollback",
+      "approx_minutes_lost": 10,
+      "evidence": [
+        "SLK-0006",
+        "DEP-002"
+      ]
+    },
+    {
+      "factor": "vendor notice in unmonitored mailbox (found 09:33)",
+      "approx_minutes_lost": 7,
+      "evidence": [
+        "EML-001",
+        "SLK-0019"
+      ]
+    },
+    {
+      "factor": "out-of-band fingerprint verification of R2 (justified security step)",
+      "approx_minutes_lost": 4,
+      "evidence": [
+        "SLK-0021",
+        "SLK-0023"
+      ]
+    },
+    {
+      "factor": "payment-adapter error-rate monitor muted (would have alerted ~09:06)",
+      "approx_minutes_lost": 8,
+      "evidence": [
+        "DDM-7712044"
+      ]
+    }
+  ],
+  "evaluation_rubric": {
+    "must_identify_root_cause": "vendor chain change (Root R2) not trusted by payment-adapter baked truststore",
+    "must_identify_org_factor": "vendor notices to orphaned mailbox; truststore automation backlog; muted monitor",
+    "must_reject_at_least": 4,
+    "must_reject_set_min": [
+      "H-DEPLOY-2.8.1",
+      "H-PAYGATE-OUTAGE",
+      "H-CERT-EXPIRED",
+      "H-NAT-PORTS"
+    ],
+    "must_use_natural_experiment": "rollback test and/or per-edge dose-response",
+    "must_flag_conflicts": [
+      "C1",
+      "C4",
+      "C6/EML",
+      "C8 vs EML-001"
+    ],
+    "must_not_conclude_internal_change_caused_it": true,
+    "timestamp_tolerance_s": 30,
+    "min_cited_evidence_per_edge": 1,
+    "cost_targets": {
+      "max_total_tokens": 60000,
+      "max_usd": 0.5,
+      "p95_latency_s": 120
+    },
+    "scoring": {
+      "root_cause_correct": 30,
+      "causal_chain_edges_f1": 20,
+      "decoys_rejected": 20,
+      "testimony_handled": 10,
+      "citations_valid": 10,
+      "budget_met": 10
+    }
+  },
+  "expected_log_templates": {
+    "anomalous_top": [
+      "PaymentGatewayClient authorize failed order_id=<*> endpoint=<*> peer=<*> attempt=<*> error=javax.net.ssl.SSLHandshakeException: PKIX path building failed: ...",
+      "PaymentGatewayClient authorize rejected order_id=<*> error=...CallNotPermittedException: CircuitBreaker 'paygate' is OPEN ...",
+      "payment authorize failed order_id=<*> upstream=payment-adapter status=502 latency_ms=<*> dd.trace_id=<*>",
+      "\"POST /api/v1/checkout/submit HTTP/1.1\" 502 - 0 <*>ms ...",
+      "log rate limiter: suppressed <*> similar messages key=paygate_authorize_error window=10s"
+    ],
+    "note": "After Drain3 masking, 50,000 lines should collapse to roughly 30-50 templates; ~5 are anomalous with frequency spikes starting 09:04."
+  }
+}

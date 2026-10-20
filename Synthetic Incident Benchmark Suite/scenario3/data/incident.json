@@ -1,0 +1,27 @@
+{
+  "scenario_id": "S3-DATABASE-CONNECTION-LEAK",
+  "incident_id": "INC-2026-1014",
+  "title": "Database Connection Leak Causes Gradual Checkout Degradation",
+  "company": "ShopSphere (fictional)",
+  "severity": "SEV1",
+  "environment": "prod-aps1",
+  "timezone": "UTC",
+  "window": {
+    "start": "2026-10-14T08:00:00.000Z",
+    "first_anomaly": "2026-10-14T08:18:00.000Z",
+    "first_error": "2026-10-14T11:08:24.000Z",
+    "alert": "2026-10-14T11:13:00.000Z",
+    "mitigation": "2026-10-14T11:58:00.000Z",
+    "resolved": "2026-10-14T12:11:00.000Z"
+  },
+  "services": [
+    "api-gateway",
+    "checkout-service",
+    "orders-service",
+    "postgres-orders",
+    "inventory-service",
+    "payment-adapter"
+  ],
+  "summary_for_humans": "A checkout-service release introduced a database connection leak in a retry loop. Connections are acquired but not closed on one exception path. Across four hours, active and idle-in-transaction connections accumulate, pool wait time and request latency rise, then the pool saturates and checkout requests time out. Traffic and CPU spikes are downstream effects; a routine reporting query and a small campaign traffic increase are decoys.",
+  "agent_note": "This file is incident metadata, not ground truth. Do not expose ground_truth.json to investigating agents."
+}

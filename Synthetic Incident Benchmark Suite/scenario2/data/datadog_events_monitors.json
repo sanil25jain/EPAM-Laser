@@ -1,0 +1,107 @@
+{
+  "monitors": [
+    {
+      "id": "DDM-7712001",
+      "name": "api-gateway 5xx error rate > 5% (5m)",
+      "query": "avg(last_5m):avg:trace.http.request.error_rate{service:api-gateway,env:prod} > 5",
+      "thresholds": {
+        "warning": 2.5,
+        "critical": 5.0
+      },
+      "muted": false
+    },
+    {
+      "id": "DDM-7712044",
+      "name": "payment-adapter error rate > 2% (5m)",
+      "query": "avg(last_5m):avg:trace.http.request.errors{service:payment-adapter} / avg:trace.http.request.hits{service:payment-adapter} * 100 > 2",
+      "muted": true,
+      "muted_reason": "PAY-441 noisy during 2.8.0 rollout",
+      "muted_until": "2026-10-15T00:00:00Z",
+      "note": "would have alerted ~09:06; silenced"
+    },
+    {
+      "id": "DDM-7712090",
+      "name": "redis evictions > 300/min",
+      "muted": false
+    },
+    {
+      "id": "DDM-7712100",
+      "name": "TLS cert expiry < 14d for *.shopsphere.example",
+      "muted": false,
+      "note": "covers OUR certs only; nothing monitors vendor chain changes or handshake-failure rate"
+    }
+  ],
+  "events": [
+    {
+      "id": "DDE-001",
+      "ts": "2026-10-08T08:52:08.000Z",
+      "type": "deploy",
+      "title": "payment-adapter 2.8.1 deployed",
+      "tags": [
+        "service:payment-adapter",
+        "version:2.8.1"
+      ]
+    },
+    {
+      "id": "DDE-002",
+      "ts": "2026-10-08T08:58:30.000Z",
+      "type": "monitor",
+      "title": "[Warn] redis evictions > 300/min",
+      "monitor": "DDM-7712090"
+    },
+    {
+      "id": "DDE-003",
+      "ts": "2026-10-08T09:00:10.000Z",
+      "type": "monitor",
+      "title": "[Recovered] redis evictions",
+      "monitor": "DDM-7712090"
+    },
+    {
+      "id": "DDE-004",
+      "ts": "2026-10-08T09:00:00.000Z",
+      "type": "statuspage",
+      "title": "PayGate: Scheduled maintenance in progress (impact: none)",
+      "source": "statuspage-integration"
+    },
+    {
+      "id": "DDE-005",
+      "ts": "2026-10-08T09:08:30.000Z",
+      "type": "monitor",
+      "title": "[Warn] api-gateway 5xx error rate > 2.5%",
+      "monitor": "DDM-7712001"
+    },
+    {
+      "id": "DDE-006",
+      "ts": "2026-10-08T09:12:30.000Z",
+      "type": "monitor",
+      "title": "[Triggered] api-gateway 5xx error rate > 5%",
+      "monitor": "DDM-7712001"
+    },
+    {
+      "id": "DDE-007",
+      "ts": "2026-10-08T09:22:00.000Z",
+      "type": "deploy",
+      "title": "payment-adapter rolled back to 2.8.0 (manual)"
+    },
+    {
+      "id": "DDE-008",
+      "ts": "2026-10-08T09:26:40.000Z",
+      "type": "statuspage",
+      "title": "PayGate: Maintenance completed",
+      "source": "statuspage-integration"
+    },
+    {
+      "id": "DDE-009",
+      "ts": "2026-10-08T09:47:06.000Z",
+      "type": "deploy",
+      "title": "payment-adapter 2.8.1 + truststore (R2) deployed"
+    },
+    {
+      "id": "DDE-010",
+      "ts": "2026-10-08T09:52:30.000Z",
+      "type": "monitor",
+      "title": "[Recovered] api-gateway 5xx error rate",
+      "monitor": "DDM-7712001"
+    }
+  ]
+}

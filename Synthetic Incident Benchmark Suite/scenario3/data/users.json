@@ -1,0 +1,79 @@
+[
+  {
+    "username": "meera.iyer",
+    "name": "Meera Iyer",
+    "role": "Staff SRE",
+    "seniority": "staff",
+    "team": "SRE"
+  },
+  {
+    "username": "karan.malhotra",
+    "name": "Karan Malhotra",
+    "role": "Checkout Engineering Lead",
+    "seniority": "senior",
+    "team": "Checkout"
+  },
+  {
+    "username": "isha.bose",
+    "name": "Isha Bose",
+    "role": "On-call Engineer",
+    "seniority": "mid",
+    "team": "SRE"
+  },
+  {
+    "username": "dmitri.volkov",
+    "name": "Dmitri Volkov",
+    "role": "Database Reliability Engineer",
+    "seniority": "staff",
+    "team": "Data Platform"
+  },
+  {
+    "username": "tara.menon",
+    "name": "Tara Menon",
+    "role": "Product Operations",
+    "seniority": "mid",
+    "team": "Operations"
+  },
+  {
+    "username": "arjun.mehta",
+    "name": "Arjun Mehta",
+    "role": "Software Engineer",
+    "seniority": "mid",
+    "team": "Checkout"
+  },
+  {
+    "username": "sana.qureshi",
+    "name": "Sana Qureshi",
+    "role": "Incident Commander",
+    "seniority": "senior",
+    "team": "SRE"
+  },
+  {
+    "username": "leo.fischer",
+    "name": "Leo Fischer",
+    "role": "Engineering Manager",
+    "seniority": "manager",
+    "team": "Checkout"
+  },
+  {
+    "username": "github-bot",
+    "name": "GitHub Bot",
+    "role": "Automation",
+    "seniority": "system",
+    "team": "Platform"
+  },
+  {
+    "username": "pagerduty-bot",
+    "name": "PagerDuty Bot",
+    "role": "Automation",
+    "seniority": "system",
+    "team": "SRE"
+  },
+  {
+    "username": "argocd-bot",
+    "name": "ArgoCD Bot",
+    "role": "Automation",
+    "seniority": "system",
+    "team": "Platform"
+  }
+]

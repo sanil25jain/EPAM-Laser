@@ -1,0 +1,69 @@
+{
+  "monitors": [
+    {
+      "id": "DDM-8801",
+      "name": "Checkout 5xx rate",
+      "query": "avg(last_5m):sum:trace.http.request.errors{service:api-gateway} / sum:trace.http.request.hits{service:api-gateway} > 0.10",
+      "threshold": 0.1,
+      "enabled": true,
+      "evaluation_delay_s": 60
+    },
+    {
+      "id": "DDM-8802",
+      "name": "Checkout p95 latency",
+      "query": "p95:trace.http.request.duration{service:checkout-service} > 1500",
+      "threshold_ms": 1500,
+      "enabled": true
+    },
+    {
+      "id": "DDM-8803",
+      "name": "DB connection leak detection",
+      "query": "max:jdbc.connections.oldest_age{service:checkout-service} > 1800",
+      "enabled": false,
+      "disabled_reason": "Never enabled; ticket DB-4882 remains backlog"
+    },
+    {
+      "id": "DDM-8804",
+      "name": "Postgres CPU high",
+      "query": "avg:system.cpu.user{host:pg-orders-0} > 80",
+      "threshold_pct": 80,
+      "enabled": true
+    }
+  ],
+  "events": [
+    {
+      "id": "DDE-001",
+      "ts": "2026-10-14T08:18:00.000Z",
+      "type": "metric_anomaly",
+      "service": "checkout-service",
+      "detail": "db_pool_active begins sustained positive drift"
+    },
+    {
+      "id": "DDE-002",
+      "ts": "2026-10-14T11:13:00.000Z",
+      "type": "monitor_alert",
+      "monitor_id": "DDM-8801",
+      "severity": "SEV1",
+      "detail": "Checkout 5xx rate exceeded 10%"
+    },
+    {
+      "id": "DDE-003",
+      "ts": "2026-10-14T11:25:00.000Z",
+      "type": "metric_snapshot",
+      "detail": "pool active 80/80; pending borrowers > 30; postgres CPU 31%"
+    },
+    {
+      "id": "DDE-004",
+      "ts": "2026-10-14T11:58:00.000Z",
+      "type": "deployment",
+      "detail": "checkout-service 3.18.1 rollout complete"
+    },
+    {
+      "id": "DDE-005",
+      "ts": "2026-10-14T12:09:00.000Z",
+      "type": "monitor_recovery",
+      "monitor_id": "DDM-8801",
+      "detail": "Checkout 5xx rate returned below 1%"
+    }
+  ]
+}

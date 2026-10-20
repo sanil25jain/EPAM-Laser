@@ -1,0 +1,242 @@
+[
+  {
+    "id": "SLK-0001",
+    "ts": "1791966000.000001",
+    "iso": "2026-10-14T08:20:00.000Z",
+    "channel": "#checkout-dev",
+    "user": "arjun.mehta",
+    "text": "Since 3.18.0 we added a retry around reservation persistence. Tests cover one retry; I'll add a connection lifecycle test.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0002",
+    "ts": "1791966960.000002",
+    "iso": "2026-10-14T08:36:00.000Z",
+    "channel": "#checkout-dev",
+    "user": "karan.malhotra",
+    "text": "The new retry should be safe; success path closes the connection. Let's watch the dashboards.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0003",
+    "ts": "1791969000.000003",
+    "iso": "2026-10-14T09:10:00.000Z",
+    "channel": "#data-platform",
+    "user": "dmitri.volkov",
+    "text": "Active connections are trending up but DB CPU is only 27%. Could be a long-running query?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0004",
+    "ts": "1791971520.000004",
+    "iso": "2026-10-14T09:52:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "isha.bose",
+    "text": "Checkout p95 has drifted from ~180ms to 420ms. Error rate still low. Investigating.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0005",
+    "ts": "1791973500.000005",
+    "iso": "2026-10-14T10:25:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "tara.menon",
+    "text": "Campaign is a little busier after worker concurrency went up. Could this just be traffic?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0006",
+    "ts": "1791974280.000006",
+    "iso": "2026-10-14T10:38:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "meera.iyer",
+    "text": "Traffic is up about 8%, but active DB sessions have climbed almost 3x. Need to compare acquisition rate vs release rate.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0007",
+    "ts": "1791974820.000007",
+    "iso": "2026-10-14T10:47:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "dmitri.volkov",
+    "text": "The reconciliation index PR merged recently. Checking whether it created lock waits or a slow query.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0008",
+    "ts": "1791975660.000008",
+    "iso": "2026-10-14T11:01:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "karan.malhotra",
+    "text": "Orders DB CPU is normal and top query duration is flat. Please don't assume the DB is overloaded from connection count alone.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0009",
+    "ts": "1791976392.000009",
+    "iso": "2026-10-14T11:13:12.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "pagerduty-bot",
+    "text": "TRIGGERED SEV1: checkout timeout ratio > 12%, pool pending borrowers rising.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0010",
+    "ts": "1791976620.000010",
+    "iso": "2026-10-14T11:17:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "isha.bose",
+    "text": "Pool wait timeout errors now widespread. Restarting pods may clear it, but let's capture pool metrics first.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0011",
+    "ts": "1791976800.000011",
+    "iso": "2026-10-14T11:20:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "tara.menon",
+    "text": "Users report checkout spinner; campaign traffic is peaking. Is gateway saturation the primary cause?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0012",
+    "ts": "1791977040.000012",
+    "iso": "2026-10-14T11:24:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "meera.iyer",
+    "text": "Gateway CPU rises after checkout latency. The earliest divergence is checkout pool active/idle age, not gateway CPU.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0013",
+    "ts": "1791977340.000013",
+    "iso": "2026-10-14T11:29:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "karan.malhotra",
+    "text": "I suspect the reporting index change. It landed around the time we noticed DB sessions.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0022",
+    "ts": "1791977460.000022",
+    "iso": "2026-10-14T11:31:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "leo.fischer",
+    "text": "The DB is clearly maxed out; the new index probably caused it. We should roll back the database migration first.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0014",
+    "ts": "1791977640.000014",
+    "iso": "2026-10-14T11:34:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "dmitri.volkov",
+    "text": "Reporting query p95 is 180ms, same as baseline. No lock pile-up. These sessions are mostly from checkout pods.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0023",
+    "ts": "1791977760.000023",
+    "iso": "2026-10-14T11:36:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "dmitri.volkov",
+    "text": "Counter-evidence: DB CPU 31%, lock waits flat, report query p95 unchanged. Connection ages and client application_name point to checkout-service.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0015",
+    "ts": "1791977940.000015",
+    "iso": "2026-10-14T11:39:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "isha.bose",
+    "text": "pg_stat_activity shows many checkout app connections with age > 30 minutes, idle in transaction; the count rises monotonically.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0016",
+    "ts": "1791978120.000016",
+    "iso": "2026-10-14T11:42:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "arjun.mehta",
+    "text": "Looking at PR #2042: catch/retry branch can skip close(). That matches the old Jira note about testing repeated SQLTransientException.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0024",
+    "ts": "1791978240.000024",
+    "iso": "2026-10-14T11:44:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "isha.bose",
+    "text": "I initially thought traffic was the cause, but the pool acquire rate is not matched by close/release events. That fits a leak.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0017",
+    "ts": "1791978360.000017",
+    "iso": "2026-10-14T11:46:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "karan.malhotra",
+    "text": "I reviewed that PR and missed the cleanup path. This is more likely than campaign traffic or the index.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0018",
+    "ts": "1791978660.000018",
+    "iso": "2026-10-14T11:51:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "github-bot",
+    "text": "PR #2054 merged: close JDBC connection in retry failure path; connection lifecycle test passed.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0019",
+    "ts": "1791979080.000019",
+    "iso": "2026-10-14T11:58:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "argocd-bot",
+    "text": "checkout-service 3.18.1 rollout complete: 6/6 pods ready.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0020",
+    "ts": "1791979380.000020",
+    "iso": "2026-10-14T12:03:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "dmitri.volkov",
+    "text": "New connections are being returned normally; old leaked sessions are draining. Pool wait and p95 falling.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0021",
+    "ts": "1791979860.000021",
+    "iso": "2026-10-14T12:11:00.000Z",
+    "channel": "#inc-2026-1014-checkout",
+    "user": "sana.qureshi",
+    "text": "Resolved. Root cause: JDBC connection leak in retry exception path; follow-up for leak detection and mandatory lifecycle tests.",
+    "thread_ts": null,
+    "reactions": []
+  }
+]

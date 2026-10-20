@@ -1,0 +1,51 @@
+[
+  {
+    "id": "DEP-001",
+    "ts": "2026-10-08T08:52:08.000Z",
+    "system": "argocd",
+    "app": "payment-adapter",
+    "env": "prod",
+    "revision": "5a1e9c3",
+    "version": "2.8.1",
+    "pr": 1998,
+    "result": "Synced/Healthy"
+  },
+  {
+    "id": "DEP-002",
+    "ts": "2026-10-08T09:22:00.000Z",
+    "system": "kubectl",
+    "app": "payment-adapter",
+    "env": "prod",
+    "version": "2.8.0",
+    "actor": "meera.iyer",
+    "note": "manual rollback; error rate unchanged after rollout complete (09:23:30)"
+  },
+  {
+    "id": "DEP-003",
+    "ts": "2026-10-08T09:44:40.000Z",
+    "system": "github",
+    "event": "merge",
+    "pr": 2011,
+    "commit": "9d3e7f1"
+  },
+  {
+    "id": "DEP-004",
+    "ts": "2026-10-08T09:47:06.000Z",
+    "system": "argocd",
+    "app": "payment-adapter",
+    "env": "prod",
+    "revision": "9d3e7f1",
+    "version": "2.8.1+truststore",
+    "result": "Synced/Healthy",
+    "rollout_complete": "2026-10-08T09:49:40.000Z"
+  },
+  {
+    "id": "DEP-005",
+    "ts": "2026-10-08T07:30:00.000Z",
+    "system": "argocd",
+    "app": "inventory-service",
+    "env": "prod",
+    "version": "1.19.4",
+    "note": "unrelated"
+  }
+]

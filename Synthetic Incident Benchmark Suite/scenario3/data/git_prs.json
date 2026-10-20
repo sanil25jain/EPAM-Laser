@@ -1,0 +1,118 @@
+[
+  {
+    "id": "GIT-PR-2042",
+    "number": 2042,
+    "title": "checkout: add retry around order reservation persistence",
+    "author": "arjun.mehta",
+    "created_at": "2026-10-12T08:00:00.000Z",
+    "merged_at": "2026-10-12T08:31:00.000Z",
+    "merged_by": "karan.malhotra",
+    "base": "main",
+    "head": "feature/order-reservation-retry",
+    "merge_commit": "7ac91fe",
+    "approvals_at_merge": 1,
+    "reviews": [
+      {
+        "reviewer": "karan.malhotra",
+        "state": "APPROVED",
+        "ts": "2026-10-12T08:28:00.000Z"
+      }
+    ],
+    "checks": {
+      "unit_tests": "passed",
+      "integration_tests": "passed",
+      "static_analysis": "passed",
+      "connection_lifecycle_test": "not_configured"
+    },
+    "files_changed": [
+      "checkout/src/main/java/com/shopsphere/orders/OrderReservationRepository.java",
+      "checkout/src/test/java/com/shopsphere/orders/OrderReservationRepositoryTest.java"
+    ],
+    "diff": "--- a/checkout/src/main/java/com/shopsphere/orders/OrderReservationRepository.java\n+++ b/checkout/src/main/java/com/shopsphere/orders/OrderReservationRepository.java\n+ for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {\n+   Connection c = dataSource.getConnection();\n+   try { return persistReservation(c, order); }\n+   catch (SQLTransientException e) { if (attempt == MAX_RETRIES - 1) throw e; }\n+ }\n+ // Connection is closed on the success path only; retry exception path skips close().",
+    "review_comment": "Retry handling looks fine; tests cover success and one retry, not repeated transient exceptions.",
+    "risk": "medium",
+    "branch_protection_bypass": {
+      "used": false
+    },
+    "note": "Primary causal code change. Connection cleanup is absent on exception/retry path."
+  },
+  {
+    "id": "GIT-PR-2051",
+    "number": 2051,
+    "title": "Tune reporting query index for daily order reconciliation",
+    "author": "dmitri.volkov",
+    "created_at": "2026-10-14T10:30:00.000Z",
+    "merged_at": "2026-10-14T10:45:00.000Z",
+    "merged_by": "dmitri.volkov",
+    "merge_commit": "bc208a1",
+    "approvals_at_merge": 2,
+    "reviews": [
+      {
+        "reviewer": "meera.iyer",
+        "state": "APPROVED"
+      },
+      {
+        "reviewer": "karan.malhotra",
+        "state": "APPROVED"
+      }
+    ],
+    "checks": {
+      "unit_tests": "passed",
+      "query_plan": "passed"
+    },
+    "files_changed": [
+      "db/migrations/V2026_10_14__orders_report_idx.sql"
+    ],
+    "diff": "CREATE INDEX CONCURRENTLY idx_orders_created_status ON orders(created_at, status);",
+    "note": "DECOY: routine reporting index; query duration and DB CPU remain within baseline."
+  },
+  {
+    "id": "GIT-PR-2054",
+    "number": 2054,
+    "title": "Close JDBC connection in retry failure path",
+    "author": "arjun.mehta",
+    "created_at": "2026-10-14T11:40:00.000Z",
+    "merged_at": "2026-10-14T11:51:00.000Z",
+    "merged_by": "karan.malhotra",
+    "merge_commit": "91fbd21",
+    "approvals_at_merge": 1,
+    "reviews": [
+      {
+        "reviewer": "dmitri.volkov",
+        "state": "APPROVED"
+      }
+    ],
+    "checks": {
+      "unit_tests": "passed",
+      "connection_lifecycle_test": "passed"
+    },
+    "files_changed": [
+      "checkout/src/main/java/com/shopsphere/orders/OrderReservationRepository.java"
+    ],
+    "diff": "finally { if (connection != null) connection.close(); }",
+    "note": "Mitigation fix; deployed gradually after leak confirmed."
+  },
+  {
+    "id": "GIT-PR-2037",
+    "number": 2037,
+    "title": "Increase campaign worker concurrency for October promotion",
+    "author": "tara.menon",
+    "merged_at": "2026-10-14T08:00:00.000Z",
+    "merged_by": "leo.fischer",
+    "approvals_at_merge": 2,
+    "reviews": [
+      {
+        "reviewer": "meera.iyer",
+        "state": "APPROVED"
+      },
+      {
+        "reviewer": "karan.malhotra",
+        "state": "APPROVED"
+      }
+    ],
+    "checks": {
+      "load_test": "passed"
+    },
+    "note": "DECOY: traffic increase is small (8%) and starts before incident; not sufficient to explain monotonic connection accumulation."
+  }
+]

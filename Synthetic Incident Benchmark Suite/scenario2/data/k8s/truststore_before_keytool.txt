@@ -1,0 +1,9 @@
+$ keytool -list -keystore /app/paygate-truststore.jks   (image payment-adapter:2.8.0 / 2.8.1, baked in at build, created 2024-03-11)
+Keystore type: JKS   Keystore provider: SUN   Your keystore contains 3 entries
+
+paygate-root-r1, Mar 11, 2024, trustedCertEntry,
+Certificate fingerprint (SHA-256): 1E:51:80:F3:83:A5:DC:F3:1A:E2:39:E5:99:9F:8E:6B:C8:92:8C:D7:BB:C6:C4:7D:C0:C5:96:70:3D:00:9D:14
+paygate-issuing-ca-g2, Mar 11, 2024, trustedCertEntry,
+Certificate fingerprint (SHA-256): 1C:49:D1:19:73:02:D0:E4:AF:7D:AD:50:35:65:40:59:FA:FF:ED:5B:CE:60:FF:BE:83:A3:13:B9:57:16:8E:89
+shopsphere-internal-ca, Mar 11, 2024, trustedCertEntry,
+Certificate fingerprint (SHA-256): 7B:E2:3A:D9:E2:1F:A0:B3:74:AC:78:B6:ED:F5:FC:FA:8B:40:8F:66:AB:FF:4E:8C:CC:A5:80:B2:7A:CE:E2:66

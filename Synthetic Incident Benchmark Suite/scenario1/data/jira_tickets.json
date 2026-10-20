@@ -1,0 +1,129 @@
+[
+  {
+    "id": "JIRA-PLAT-4821",
+    "key": "PLAT-4821",
+    "type": "Task",
+    "summary": "Increase checkout DB pool and session TTL for festive sale",
+    "reporter": "arjun.mehta",
+    "assignee": "arjun.mehta",
+    "created": "2026-09-17T13:28:00.000Z",
+    "priority": "High",
+    "change_risk_self_assessed": "Low",
+    "change_type": "Standard",
+    "required_reviewers": [
+      "priya.nair"
+    ],
+    "qa_signoff": null,
+    "workflow_required": [
+      "To Do",
+      "In Progress",
+      "Code Review",
+      "QA Verification",
+      "Done"
+    ],
+    "status": "Done",
+    "linked_prs": [
+      "GIT-PR-1893"
+    ],
+    "changelog": [
+      {
+        "ts": "2026-09-17T13:30:00.000Z",
+        "by": "arjun.mehta",
+        "field": "status",
+        "from": "To Do",
+        "to": "In Progress"
+      },
+      {
+        "ts": "2026-09-17T14:06:20.000Z",
+        "by": "vikram.rao",
+        "field": "status",
+        "from": "In Progress",
+        "to": "Done",
+        "note": "Project-admin override: workflow validators skipped (Code Review, QA Verification)"
+      }
+    ],
+    "comments": [
+      {
+        "ts": "2026-09-17T13:29:00.000Z",
+        "by": "arjun.mehta",
+        "text": "Load test showed pool=20 saturating ~18k concurrent users. Need 50 before sale."
+      },
+      {
+        "ts": "2026-09-17T13:58:30.000Z",
+        "by": "priya.nair",
+        "text": "Will review after capacity meeting (till ~14:30)."
+      },
+      {
+        "ts": "2026-09-17T14:06:25.000Z",
+        "by": "vikram.rao",
+        "text": "Sale freeze 15:00 UTC. Closing with override, config-only bump. Arjun to monitor after merge."
+      }
+    ]
+  },
+  {
+    "id": "JIRA-PLAT-4830",
+    "key": "PLAT-4830",
+    "type": "Post-incident review",
+    "summary": "INC-2026-0917 checkout outage - post-mortem",
+    "reporter": "sana.qureshi",
+    "assignee": "vikram.rao",
+    "created": "2026-09-17T15:30:00.000Z",
+    "status": "To Do",
+    "priority": "High"
+  },
+  {
+    "id": "JIRA-PLAT-4815",
+    "key": "PLAT-4815",
+    "type": "Task",
+    "summary": "Enforce config schema validation (int fields) for all prod overlays in CI",
+    "reporter": "dmitri.volkov",
+    "created": "2026-07-08T09:12:00.000Z",
+    "status": "Backlog",
+    "priority": "Medium",
+    "comments": [
+      {
+        "ts": "2026-07-08T09:15:00.000Z",
+        "by": "dmitri.volkov",
+        "text": "Typos in numeric config only surface at runtime. Should block merge."
+      }
+    ],
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-PLAT-4802",
+    "key": "PLAT-4802",
+    "type": "Bug",
+    "summary": "config-schema-validate workflow does not trigger for k8s/overlays/** changes",
+    "reporter": "meera.iyer",
+    "created": "2026-08-19T14:02:00.000Z",
+    "status": "To Do",
+    "priority": "Low",
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-PLAT-4799",
+    "key": "PLAT-4799",
+    "type": "Task",
+    "summary": "Document pg snapshot backup behaviour (no locks, storage-level snapshot)",
+    "reporter": "meera.iyer",
+    "created": "2026-08-12T10:30:00.000Z",
+    "status": "Done",
+    "comments": [
+      {
+        "ts": "2026-08-14T10:00:00.000Z",
+        "by": "dmitri.volkov",
+        "text": "Confirmed: snapshot-based, takes no table locks, expect brief checkpoint IO only."
+      }
+    ]
+  },
+  {
+    "id": "JIRA-PLAT-4810",
+    "key": "PLAT-4810",
+    "type": "Task",
+    "summary": "Rotate marketing banner CDN keys",
+    "reporter": "neha.kapoor",
+    "created": "2026-09-02T08:00:00.000Z",
+    "status": "In Progress",
+    "note": "unrelated noise"
+  }
+]

@@ -1,0 +1,402 @@
+{
+  "scenario_id": "S3-DATABASE-CONNECTION-LEAK",
+  "incident_id": "INC-2026-1014",
+  "company": "ShopSphere (fictional)",
+  "incident_window_utc": {
+    "first_anomaly": "2026-10-14T08:18:00.000Z",
+    "first_error": "2026-10-14T11:08:24.000Z",
+    "monitor_alert": "2026-10-14T11:13:00.000Z",
+    "pool_saturation": "2026-10-14T11:25:00.000Z",
+    "fix_deployed": "2026-10-14T11:58:00.000Z",
+    "recovered": "2026-10-14T12:09:00.000Z",
+    "resolved": "2026-10-14T12:11:00.000Z"
+  },
+  "mttd_seconds": 10500,
+  "mttr_seconds_from_first_error": 3780,
+  "root_cause": {
+    "technical": "PR #2042 (commit 7ac91fe, deployed as checkout-service 3.18.0) introduced a JDBC connection leak in OrderReservationRepository's retry loop. The code obtains a connection before the try/catch but only closes it on the success path; when SQLTransientException triggers a retry, that exception path skips close(). The leaked sessions remain idle in transaction and accumulate gradually. After approximately four hours, HikariPool-Checkout reaches 80/80 active connections, pending borrowers rise, acquire waits exceed 1.5 seconds, orders-service persistence calls fail with SQLTransientConnectionException, and checkout/API gateway errors rise.",
+    "organizational": "A Jira warning (ORD-5192) explicitly asked for connection closure across every retry branch, but the review and tests covered success and one retry only. Connection lifecycle testing was not configured, and the pool leak detection monitor remained disabled despite backlog ticket DB-4882.",
+    "latent_factors": [
+      "retry-loop connection cleanup absent on exception path",
+      "tests did not force repeated transient exceptions or assert connection close count",
+      "review checklist lacked resource-lifecycle requirement for JDBC retry code",
+      "DB-4882 leak-detection/oldest-connection-age monitor remained backlog/disabled",
+      "no alert on connection acquisition rate diverging from connection close/release rate"
+    ]
+  },
+  "causal_dag": {
+    "nodes": [
+      {
+        "id": "N0",
+        "label": "PR #2042 introduces retry loop with missing close() on exception path",
+        "type": "code_change",
+        "time": "2026-10-12T08:31:00.000Z",
+        "evidence": [
+          "GIT-PR-2042",
+          "DEP-001"
+        ]
+      },
+      {
+        "id": "N1",
+        "label": "SQLTransientException triggers retry path; acquired JDBC connection is not released",
+        "type": "mechanism",
+        "time": "2026-10-14T10:26:00.000Z",
+        "evidence": [
+          "L027635",
+          "GIT-PR-2042",
+          "JIRA-ORD-5192"
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "Active and idle-in-transaction checkout connections accumulate over hours",
+        "type": "technical_state",
+        "time": "2026-10-14T08:18:00.000Z",
+        "evidence": [
+          "metrics:checkout-service.db_pool_active",
+          "metrics:checkout-service.db_pool_idle_in_transaction",
+          "L001717"
+        ]
+      },
+      {
+        "id": "N3",
+        "label": "HikariPool-Checkout saturates at 80/80; pending borrowers and acquire wait rise",
+        "type": "technical_failure",
+        "time": "2026-10-14T11:13:00.000Z",
+        "evidence": [
+          "L035277",
+          "metrics:checkout-service.db_pool_pending_borrowers",
+          "metrics:checkout-service.db_pool_acquire_wait_p95"
+        ]
+      },
+      {
+        "id": "N4",
+        "label": "orders-service persistence fails with SQLTransientConnectionException",
+        "type": "technical_failure",
+        "time": "2026-10-14T11:14:00.000Z",
+        "evidence": [
+          "L036155",
+          "datadog_apm_traces.jsonl"
+        ]
+      },
+      {
+        "id": "N5",
+        "label": "checkout requests time out; API gateway 504 rate and CPU rise downstream",
+        "type": "symptom",
+        "time": "2026-10-14T11:15:00.000Z",
+        "evidence": [
+          "L036163",
+          "metrics:api-gateway.http_5xx_rate",
+          "datadog_apm_traces.jsonl"
+        ]
+      },
+      {
+        "id": "N6",
+        "label": "Fix closes connections in finally path; rolling recycle drains leaked sessions and pool recovers",
+        "type": "recovery",
+        "time": "2026-10-14T11:58:00.000Z",
+        "evidence": [
+          "GIT-PR-2054",
+          "DEP-004",
+          "metrics:checkout-service.connection_close_rate"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "N0",
+        "to": "N1",
+        "mechanism": "deployed code executes retry branch after SQLTransientException; missing finally/try-with-resources leaves connection allocated",
+        "expected_lag_s": [
+          0,
+          172800
+        ],
+        "type": "causal"
+      },
+      {
+        "from": "N1",
+        "to": "N2",
+        "mechanism": "each retry exception leaks one checked-out connection; acquisition rate exceeds close/release rate",
+        "expected_lag_s": [
+          0,
+          14400
+        ],
+        "required_divergence": "checkout-service db_pool_active and idle_in_transaction increase monotonically while close rate lags"
+      },
+      {
+        "from": "N2",
+        "to": "N3",
+        "mechanism": "finite pool max=80 reached; new borrowers queue and time out",
+        "expected_lag_s": [
+          600,
+          14400
+        ],
+        "required_divergence": "active=80, idle=0, pending borrowers and acquire wait jump"
+      },
+      {
+        "from": "N3",
+        "to": "N4",
+        "mechanism": "orders persistence cannot acquire connection before 1500ms pool timeout",
+        "expected_lag_s": [
+          0,
+          5
+        ],
+        "required_divergence": "SQLTransientConnectionException in orders-service traces/logs"
+      },
+      {
+        "from": "N4",
+        "to": "N5",
+        "mechanism": "checkout request cannot persist order and propagates 5xx/504 to gateway",
+        "expected_lag_s": [
+          0,
+          5
+        ],
+        "required_divergence": "checkout/orders errors precede gateway timeout rate and CPU increase"
+      },
+      {
+        "from": "N6",
+        "to": "N2",
+        "mechanism": "fixed code stops new leaks; rolling pod replacement drains leaked connections",
+        "expected_lag_s": [
+          0,
+          660
+        ],
+        "type": "recovery"
+      }
+    ]
+  },
+  "natural_experiments": [
+    {
+      "name": "monotonic accumulation despite near-flat request rate",
+      "result": "active connections and oldest age climb for hours while request rate varies only modestly; disproves traffic-only explanation",
+      "evidence": [
+        "datadog_metrics.csv",
+        "logs_raw.jsonl"
+      ]
+    },
+    {
+      "name": "database load controls",
+      "result": "Postgres CPU remains roughly 25-32%, lock waits stay low, reporting query p95 stays around 180ms while connection pool saturates",
+      "evidence": [
+        "datadog_metrics.csv",
+        "SLK-0023"
+      ]
+    },
+    {
+      "name": "code-path reproduction",
+      "result": "review of PR #2042 shows connection acquired before retry loop and cleanup only on success; SQLTransientException branch skips close; PR #2054 adds finally cleanup",
+      "evidence": [
+        "GIT-PR-2042",
+        "GIT-PR-2054",
+        "JIRA-ORD-5192"
+      ]
+    },
+    {
+      "name": "fix intervention",
+      "result": "after 3.18.1 with close-in-finally is deployed, new connection close rate recovers, leaked sessions drain, pool wait and 5xx drop without a database restart or index rollback",
+      "evidence": [
+        "DEP-004",
+        "metrics:checkout-service.connection_close_rate",
+        "metrics:api-gateway.http_5xx_rate"
+      ]
+    }
+  ],
+  "rejected_hypotheses": [
+    {
+      "id": "H-CAMPAIGN-TRAFFIC",
+      "claim": "Campaign traffic increase caused pool saturation",
+      "why_plausible": "campaign worker concurrency changed on incident day and request rate rose modestly",
+      "falsified_by": [
+        "request rate increase is approximately 8%, while active connections rise from ~24 to pool max 80",
+        "active connections and oldest connection age trend upward even when request rate is flat",
+        "acquisition rate exceeds close/release rate; leaked sessions remain idle in transaction"
+      ]
+    },
+    {
+      "id": "H-REPORTING-INDEX",
+      "claim": "PR #2051 reporting index change caused database contention",
+      "why_plausible": "index PR merged during the window and an engineer suspected it",
+      "falsified_by": [
+        "reporting query p95 remains ~180ms",
+        "Postgres CPU remains below ~35%; lock waits remain near baseline",
+        "pool saturation is isolated to checkout-service application connections"
+      ]
+    },
+    {
+      "id": "H-GATEWAY-CPU",
+      "claim": "API gateway CPU saturation is the root cause",
+      "why_plausible": "gateway CPU rises as user-visible timeouts become severe",
+      "falsified_by": [
+        "checkout pool wait and SQLTransientConnectionException precede gateway CPU increase",
+        "gateway CPU is downstream retry/timeout work; database connection pool is already saturated"
+      ]
+    },
+    {
+      "id": "H-DB-HARD-LIMIT",
+      "claim": "Postgres max_connections or database hardware is undersized",
+      "why_plausible": "pg_stat_activity shows a high connection count",
+      "falsified_by": [
+        "global database max_connections is 300 and total count remains below it",
+        "DB CPU and lock waits are not saturated",
+        "checkout Hikari pool hits its own configured maximum of 80 first"
+      ]
+    },
+    {
+      "id": "H-REPORTING-LOCKS",
+      "claim": "The reporting query is holding locks that block checkout writes",
+      "why_plausible": "reporting query/index change temporally overlaps degradation",
+      "falsified_by": [
+        "lock_wait_count stays low; reporting query duration is unchanged",
+        "checkout application connections are old and idle_in_transaction, not blocked on the reporting query"
+      ]
+    }
+  ],
+  "human_testimony_claims": [
+    {
+      "claim_id": "C1",
+      "speaker": "tara.menon",
+      "msg": "SLK-0005",
+      "claim": "Campaign traffic is the cause",
+      "truth": "FALSE as primary cause; small traffic lift is a contributing load stimulus only",
+      "refuted_by": [
+        "datadog_metrics.csv",
+        "metrics:checkout-service.db_pool_active"
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "speaker": "dmitri.volkov",
+      "msg": "SLK-0007",
+      "claim": "Reporting index change may have caused DB contention",
+      "truth": "FALSE; hypothesis was reasonable but telemetry does not support it",
+      "refuted_by": [
+        "metrics:postgres-orders.reporting_query_p95",
+        "metrics:postgres-orders.lock_wait_count"
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "speaker": "leo.fischer",
+      "msg": "SLK-0022",
+      "claim": "DB is maxed out and index probably caused it",
+      "truth": "FALSE; seniority does not outweigh contradictory telemetry",
+      "refuted_by": [
+        "SLK-0023",
+        "datadog_metrics.csv"
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "speaker": "dmitri.volkov",
+      "msg": "SLK-0015",
+      "claim": "Many old checkout sessions are idle in transaction; pool leak is likely",
+      "truth": "TRUE and supported by application_name/session age evidence",
+      "supported_by": [
+        "SLK-0015",
+        "L038347"
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "speaker": "arjun.mehta",
+      "msg": "SLK-0016",
+      "claim": "PR #2042 retry catch path skips close()",
+      "truth": "TRUE; code diff and Jira warning independently support claim",
+      "supported_by": [
+        "GIT-PR-2042",
+        "JIRA-ORD-5192"
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "speaker": "karan.malhotra",
+      "msg": "SLK-0017",
+      "claim": "I reviewed the PR and missed the cleanup path",
+      "truth": "TRUE; acknowledgement, not causal evidence by itself",
+      "supported_by": [
+        "GIT-PR-2042"
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "speaker": "isha.bose",
+      "msg": "SLK-0024",
+      "claim": "Traffic-only theory is insufficient; acquire rate exceeds close rate",
+      "truth": "TRUE and evidence-led correction",
+      "supported_by": [
+        "datadog_metrics.csv"
+      ]
+    }
+  ],
+  "mttr_contributors": [
+    {
+      "factor": "No alert on oldest connection age / leak monitor disabled",
+      "approx_minutes_lost": 18,
+      "evidence": [
+        "DDM-8803",
+        "JIRA-DB-4882"
+      ]
+    },
+    {
+      "factor": "Initial anchoring on campaign traffic",
+      "approx_minutes_lost": 8,
+      "evidence": [
+        "SLK-0005",
+        "SLK-0011"
+      ]
+    },
+    {
+      "factor": "Initial suspicion of reporting index change",
+      "approx_minutes_lost": 7,
+      "evidence": [
+        "SLK-0007",
+        "SLK-0013",
+        "SLK-0023"
+      ]
+    },
+    {
+      "factor": "No mandatory connection lifecycle test in PR checklist",
+      "approx_minutes_lost": 12,
+      "evidence": [
+        "GIT-PR-2042",
+        "JIRA-ORD-5192"
+      ]
+    }
+  ],
+  "expected_log_templates": [
+    "jdbc pool snapshot active=<n> idle=<n> pending=<n> oldest_connection_age_s=<n>",
+    "connection cleanup skipped after retry exception path=OrderReservationRepository.reserve",
+    "HikariPool-Checkout - Connection is not available, request timed out after 1500ms",
+    "SQLTransientConnectionException: HikariPool-Checkout - Connection is not available",
+    "pg_stat_activity app=checkout-service idle_in_transaction=<n>",
+    "upstream checkout-service timeout status=504"
+  ],
+  "evaluation_rubric": {
+    "must_identify_root_cause": "JDBC connection leak in PR #2042 retry exception path; not merely 'database overload'",
+    "must_construct_causal_chain": [
+      "PR #2042 deployed",
+      "retry exception skips connection close",
+      "active/idle-in-transaction connections accumulate",
+      "Hikari pool reaches 80/80",
+      "orders persistence fails",
+      "checkout/API gateway timeouts"
+    ],
+    "must_reject": [
+      "campaign traffic as sole cause",
+      "reporting index/slow query",
+      "gateway CPU as initiating cause",
+      "Postgres max_connections/hardware as primary cause"
+    ],
+    "must_use_counterfactual": "fix PR #2054 and rolling recycle stop new leaks and drain sessions; no DB restart or reporting-index rollback required",
+    "evidence_citation_requirement": "At least 2 independent sources for root cause (code diff + Jira or logs + metric trajectory); cite stable IDs and metric names",
+    "testimony_rule": "Weight claims by corroborating evidence and falsifiability, not role seniority",
+    "scoring": {
+      "root_cause": 30,
+      "dag_edge_f1": 20,
+      "decoys_rejected": 20,
+      "testimony_evaluation": 10,
+      "evidence_citations": 10,
+      "token_budget_and_latency": 10
+    }
+  }
+}

@@ -1,0 +1,90 @@
+[
+  {
+    "id": "JIRA-ORD-5192",
+    "key": "ORD-5192",
+    "type": "Bug",
+    "summary": "Order reservation retry can leave JDBC connection open on exception",
+    "reporter": "dmitri.volkov",
+    "assignee": "arjun.mehta",
+    "created": "2026-10-12T10:18:00.000Z",
+    "priority": "Medium",
+    "status": "In Progress",
+    "linked_prs": [
+      "GIT-PR-2042"
+    ],
+    "comments": [
+      {
+        "ts": "2026-10-12T10:25:00.000Z",
+        "by": "dmitri.volkov",
+        "text": "Please verify connection close in every retry branch. Current test suite does not force repeated SQLTransientException."
+      },
+      {
+        "ts": "2026-10-13T16:42:00.000Z",
+        "by": "arjun.mehta",
+        "text": "Added retry coverage; only success + one transient failure covered. Will add lifecycle test next sprint."
+      }
+    ],
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-ORD-5210",
+    "key": "ORD-5210",
+    "type": "Incident",
+    "summary": "INC-2026-1014 checkout requests timing out due to database pool saturation",
+    "reporter": "sana.qureshi",
+    "assignee": "karan.malhotra",
+    "created": "2026-10-14T11:25:00.000Z",
+    "priority": "Highest",
+    "status": "Open",
+    "linked_prs": [
+      "GIT-PR-2042",
+      "GIT-PR-2054"
+    ]
+  },
+  {
+    "id": "JIRA-DB-4882",
+    "key": "DB-4882",
+    "type": "Task",
+    "summary": "Add pool leak detection and active connection age dashboard",
+    "reporter": "meera.iyer",
+    "created": "2026-07-22T09:00:00.000Z",
+    "priority": "Medium",
+    "status": "Backlog",
+    "comments": [
+      {
+        "ts": "2026-07-22T09:15:00.000Z",
+        "by": "meera.iyer",
+        "text": "Pool metrics expose active count but not connection age by borrower; leak detection threshold not enabled."
+      }
+    ],
+    "latent_factor": true
+  },
+  {
+    "id": "JIRA-PLAT-4911",
+    "key": "PLAT-4911",
+    "type": "Task",
+    "summary": "Campaign worker concurrency adjustment for October promotion",
+    "reporter": "tara.menon",
+    "created": "2026-10-13T11:00:00.000Z",
+    "priority": "Low",
+    "status": "Done",
+    "linked_prs": [
+      "GIT-PR-2037"
+    ],
+    "note": "DECOY context; approved load test predicted less than 10% traffic lift."
+  },
+  {
+    "id": "JIRA-DB-4770",
+    "key": "DB-4770",
+    "type": "Task",
+    "summary": "Review nightly orders reconciliation query performance",
+    "reporter": "dmitri.volkov",
+    "created": "2026-09-02T10:00:00.000Z",
+    "priority": "Low",
+    "status": "Done",
+    "linked_prs": [
+      "GIT-PR-2051"
+    ],
+    "note": "Routine index change, query performance remains normal."
+  }
+]

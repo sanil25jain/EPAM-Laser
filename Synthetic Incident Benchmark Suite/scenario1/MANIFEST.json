@@ -1,0 +1,76 @@
+{
+  "seed": 1337,
+  "log_lines": 50000,
+  "signal_lines_before_noise_fill": 17115,
+  "approx_raw_log_tokens": 3507411,
+  "metric_rows": 2650,
+  "slack_messages": 38,
+  "k8s_events": 246,
+  "audit_entries": 24,
+  "files": {
+    "README.md": {
+      "bytes": 4265,
+      "sha256": "91ebd9ea97822936"
+    },
+    "data/deploy_events.json": {
+      "bytes": 1807,
+      "sha256": "9165fcb1c184ff13"
+    },
+    "data/git_prs.json": {
+      "bytes": 4388,
+      "sha256": "e818b6e6e6abbc30"
+    },
+    "data/ground_truth.json": {
+      "bytes": 11681,
+      "sha256": "b319658629051b92"
+    },
+    "data/jira_tickets.json": {
+      "bytes": 3562,
+      "sha256": "3015ca6e5914f300"
+    },
+    "data/logs_raw.jsonl": {
+      "bytes": 14079645,
+      "sha256": "9edba12da9651f35"
+    },
+    "data/metrics.csv": {
+      "bytes": 192662,
+      "sha256": "45a755a658b1cf75"
+    },
+    "data/pagerduty_alerts.json": {
+      "bytes": 1688,
+      "sha256": "d4def634c4754204"
+    },
+    "data/service_dependency_graph.json": {
+      "bytes": 1489,
+      "sha256": "a0e92c6825cdc04b"
+    },
+    "data/slack_messages.json": {
+      "bytes": 12283,
+      "sha256": "c8c420b804b9864a"
+    },
+    "data/users.json": {
+      "bytes": 1508,
+      "sha256": "1f658ec31c233ff4"
+    },
+    "data/k8s/configmap_checkout_rev41.yaml": {
+      "bytes": 531,
+      "sha256": "46d58c3c1c2eef29"
+    },
+    "data/k8s/configmap_checkout_rev42.yaml": {
+      "bytes": 532,
+      "sha256": "b40a1716a559992a"
+    },
+    "data/k8s/configmap_checkout_rev43.yaml": {
+      "bytes": 531,
+      "sha256": "a2233463a56c7840"
+    },
+    "data/k8s/k8s_audit.jsonl": {
+      "bytes": 5826,
+      "sha256": "7766965f6a38e25e"
+    },
+    "data/k8s/k8s_events.jsonl": {
+      "bytes": 66239,
+      "sha256": "a39e23d5f3c1ca69"
+    }
+  }
+}

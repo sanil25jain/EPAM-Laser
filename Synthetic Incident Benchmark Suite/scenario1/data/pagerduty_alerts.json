@@ -1,0 +1,59 @@
+[
+  {
+    "id": "PD-Q1A2B3",
+    "title": "[SEV2] checkout availability SLO burn: api-gateway 5xx > 5% (prod-aps1)",
+    "service": "checkout-availability",
+    "urgency": "high",
+    "triggered_at": "2026-09-17T14:15:22.000Z",
+    "acknowledged_at": "2026-09-17T14:17:05.000Z",
+    "acknowledged_by": "rahul.verma",
+    "resolved_at": "2026-09-17T14:50:10.000Z",
+    "timeline": [
+      {
+        "ts": "2026-09-17T14:15:22.000Z",
+        "event": "triggered"
+      },
+      {
+        "ts": "2026-09-17T14:17:05.000Z",
+        "event": "acknowledged by rahul.verma"
+      },
+      {
+        "ts": "2026-09-17T14:22:45.000Z",
+        "event": "incident commander sana.qureshi engaged"
+      },
+      {
+        "ts": "2026-09-17T14:24:10.000Z",
+        "event": "meera.iyer joined"
+      },
+      {
+        "ts": "2026-09-17T14:50:10.000Z",
+        "event": "resolved"
+      }
+    ]
+  },
+  {
+    "id": "PD-Q4C5D6",
+    "title": "[SEV3] api-gateway CPU > 80% for 2m",
+    "service": "api-gateway",
+    "urgency": "low",
+    "triggered_at": "2026-09-17T14:16:50.000Z",
+    "note": "symptom alert (retry storm)"
+  },
+  {
+    "id": "PD-Q7E8F9",
+    "title": "[SEV3] KubePodCrashLooping checkout/checkout-service (prod-aps1)",
+    "service": "k8s-platform",
+    "urgency": "low",
+    "triggered_at": "2026-09-17T14:27:50.000Z",
+    "routed_to": "#alerts-noisy",
+    "note": "rule uses for: 15m, fired ~15 min after first crash; routed to low-urgency channel nobody watched"
+  },
+  {
+    "id": "PD-Q0G1H2",
+    "title": "[INFO] inventory-service HPA scaled 4->6",
+    "service": "inventory-service",
+    "urgency": "low",
+    "triggered_at": "2026-09-17T14:11:05.000Z",
+    "note": "decoy"
+  }
+]

@@ -1,0 +1,79 @@
+{
+  "services": [
+    {
+      "name": "api-gateway",
+      "tier": "edge",
+      "owner": "platform"
+    },
+    {
+      "name": "checkout-service",
+      "tier": "core",
+      "owner": "checkout",
+      "replicas_prod": 6,
+      "replicas_staging": 3,
+      "config": "checkout-config (hot-reload watcher, fatal on invalid)"
+    },
+    {
+      "name": "payment-adapter",
+      "tier": "core",
+      "owner": "payments"
+    },
+    {
+      "name": "inventory-service",
+      "tier": "core",
+      "owner": "catalog"
+    },
+    {
+      "name": "postgres-orders",
+      "tier": "data",
+      "owner": "dba"
+    },
+    {
+      "name": "marketing-banner-service",
+      "tier": "peripheral",
+      "owner": "marketing"
+    },
+    {
+      "name": "paygate",
+      "tier": "third-party",
+      "owner": "external"
+    }
+  ],
+  "calls": [
+    [
+      "api-gateway",
+      "checkout-service"
+    ],
+    [
+      "api-gateway",
+      "inventory-service"
+    ],
+    [
+      "api-gateway",
+      "marketing-banner-service"
+    ],
+    [
+      "checkout-service",
+      "payment-adapter"
+    ],
+    [
+      "checkout-service",
+      "postgres-orders"
+    ],
+    [
+      "inventory-service",
+      "postgres-orders"
+    ],
+    [
+      "payment-adapter",
+      "paygate"
+    ]
+  ],
+  "config_dependencies": [
+    [
+      "checkout-config",
+      "checkout-service"
+    ]
+  ],
+  "notes": "marketing-banner-service has NO call path to checkout-service. Postgres snapshot backup is storage-level (no locks)."
+}

@@ -1,0 +1,89 @@
+{
+  "seed": 2026,
+  "log_lines": 50000,
+  "signal_lines_before_noise_fill": 26886,
+  "metric_rows": 2862,
+  "apm_traces": 340,
+  "slack_messages": 31,
+  "k8s_events": 63,
+  "audit_entries": 13,
+  "monitor_alert_utc": "2026-10-08T09:12:30.000Z",
+  "files": {
+    "data/cert_observations.json": {
+      "bytes": 3782,
+      "sha256": "b7bf02034690caf0"
+    },
+    "data/datadog_apm_traces.jsonl": {
+      "bytes": 388329,
+      "sha256": "797a3ab360d920a4"
+    },
+    "data/datadog_events_monitors.json": {
+      "bytes": 3000,
+      "sha256": "db3d780d40ab5c00"
+    },
+    "data/datadog_metrics.csv": {
+      "bytes": 297446,
+      "sha256": "994b369ef788bf08"
+    },
+    "data/deploy_events.json": {
+      "bytes": 1152,
+      "sha256": "45ee12f84dfdb208"
+    },
+    "data/git_prs.json": {
+      "bytes": 2063,
+      "sha256": "4bb55ce06ab06b91"
+    },
+    "data/ground_truth.json": {
+      "bytes": 13669,
+      "sha256": "5e0606a1e43fbc96"
+    },
+    "data/jira_tickets.json": {
+      "bytes": 1672,
+      "sha256": "eb7916ede31fe090"
+    },
+    "data/logs_raw.jsonl": {
+      "bytes": 15396740,
+      "sha256": "cb31ad866a44e181"
+    },
+    "data/pagerduty_alerts.json": {
+      "bytes": 1077,
+      "sha256": "f494ac4b999b74f6"
+    },
+    "data/service_dependency_graph.json": {
+      "bytes": 1337,
+      "sha256": "c737c271352c0922"
+    },
+    "data/slack_messages.json": {
+      "bytes": 10114,
+      "sha256": "dd7c542f6bd9f226"
+    },
+    "data/users.json": {
+      "bytes": 1566,
+      "sha256": "20db613b7d54c5a7"
+    },
+    "data/vendor_notices.json": {
+      "bytes": 2608,
+      "sha256": "883398d0e19cea8c"
+    },
+    "data/k8s/Dockerfile_payment-adapter.txt": {
+      "bytes": 407,
+      "sha256": "a303c7fdb53e6893"
+    },
+    "data/k8s/k8s_audit.jsonl": {
+      "bytes": 3491,
+      "sha256": "49942b7bef52794a"
+    },
+    "data/k8s/k8s_events.jsonl": {
+      "bytes": 15825,
+      "sha256": "1da87427435b105e"
+    },
+    "data/k8s/truststore_after_keytool.txt": {
+      "bytes": 928,
+      "sha256": "c28d86517955b3a1"
+    },
+    "data/k8s/truststore_before_keytool.txt": {
+      "bytes": 766,
+      "sha256": "1b940c1cd266a312"
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "repo": "shopsphere/platform-config",
+  "pull_requests": [
+    {
+      "id": "GIT-PR-1893",
+      "number": 1893,
+      "title": "PLAT-4821: raise checkout DB pool 20->50 and session TTL for festive sale",
+      "author": "arjun.mehta",
+      "opened_at": "2026-09-17T13:41:00.000Z",
+      "merged_at": "2026-09-17T14:09:40.000Z",
+      "merged_by": "vikram.rao",
+      "merge_method": "squash",
+      "merge_commit": "3be91f7",
+      "base": "main",
+      "head": "arjun/plat-4821-pool-bump",
+      "labels": [
+        "config",
+        "festive-sale"
+      ],
+      "linked_jira": "PLAT-4821",
+      "description": "Raises prod checkout DB pool for the festive sale (load test saturated pool=20 at ~18k concurrent). Staging overlay updated and verified. Needs merge before 15:00 UTC freeze.",
+      "files_changed": [
+        "k8s/overlays/prod/configmap-checkout.yaml",
+        "k8s/overlays/staging/configmap-checkout.yaml"
+      ],
+      "diff": "--- a/k8s/overlays/prod/configmap-checkout.yaml\n+++ b/k8s/overlays/prod/configmap-checkout.yaml\n@@ -5,5 +5,5 @@ data:\n   checkout.env: |\n     CHECKOUT_DB_HOST=pg-orders-primary.db.svc.cluster.local\n     CHECKOUT_DB_NAME=orders\n-    CHECKOUT_DB_POOL_MAX=20\n+    CHECKOUT_DB_POOL_MAX=5O\n     CHECKOUT_DB_POOL_MIN=5\n-    SESSION_TTL_SECONDS=900\n+    SESSION_TTL_SECONDS=1800\n--- a/k8s/overlays/staging/configmap-checkout.yaml\n+++ b/k8s/overlays/staging/configmap-checkout.yaml\n@@ -5,5 +5,5 @@ data:\n-    CHECKOUT_DB_POOL_MAX=20\n+    CHECKOUT_DB_POOL_MAX=50\n-    SESSION_TTL_SECONDS=900\n+    SESSION_TTL_SECONDS=1800\n",
+      "commits": [
+        {
+          "sha": "1c9ae40",
+          "author": "arjun.mehta",
+          "ts": "2026-09-17T13:40:00.000Z",
+          "message": "bump checkout pool + ttl (staging)"
+        },
+        {
+          "sha": "8d02f6b",
+          "author": "arjun.mehta",
+          "ts": "2026-09-17T13:49:00.000Z",
+          "message": "apply same to prod overlay"
+        }
+      ],
+      "review_requests": [
+        {
+          "reviewer": "priya.nair",
+          "requested_at": "2026-09-17T13:58:05.000Z",
+          "state": "PENDING",
+          "source": "CODEOWNERS"
+        }
+      ],
+      "reviews": [],
+      "required_approvals": 1,
+      "approvals_at_merge": 0,
+      "branch_protection_bypass": {
+        "used": true,
+        "by": "vikram.rao",
+        "ts": "2026-09-17T14:09:38.000Z",
+        "reason_text": "sale freeze at 15:00 UTC; trivial config bump"
+      },
+      "checks": [
+        {
+          "name": "unit-tests",
+          "conclusion": "success",
+          "completed_at": "2026-09-17T13:52:00.000Z"
+        },
+        {
+          "name": "yaml-lint",
+          "conclusion": "success",
+          "completed_at": "2026-09-17T13:52:30.000Z",
+          "note": "syntax only; values are strings so '5O' is valid YAML"
+        },
+        {
+          "name": "config-schema-validate",
+          "conclusion": "skipped",
+          "note": "workflow path filter is 'helm/**'; changed files under 'k8s/overlays/**' did not trigger it (see PLAT-4802)"
+        }
+      ]
+    },
+    {
+      "id": "GIT-PR-1896",
+      "number": 1896,
+      "title": "Revert PLAT-4821 prod config (incident INC-2026-0917)",
+      "author": "dmitri.volkov",
+      "opened_at": "2026-09-17T14:38:00.000Z",
+      "merged_at": "2026-09-17T14:40:10.000Z",
+      "merged_by": "dmitri.volkov",
+      "merge_commit": "c71d0e2",
+      "reviews": [
+        {
+          "reviewer": "meera.iyer",
+          "state": "APPROVED",
+          "ts": "2026-09-17T14:39:30.000Z"
+        }
+      ],
+      "approvals_at_merge": 1,
+      "branch_protection_bypass": {
+        "used": false
+      },
+      "diff": "--- a/k8s/overlays/prod/configmap-checkout.yaml\n+++ b/k8s/overlays/prod/configmap-checkout.yaml\n-    CHECKOUT_DB_POOL_MAX=5O\n+    CHECKOUT_DB_POOL_MAX=20\n-    SESSION_TTL_SECONDS=1800\n+    SESSION_TTL_SECONDS=900\n"
+    },
+    {
+      "id": "GIT-PR-1890",
+      "number": 1890,
+      "title": "inventory: tune HPA targets for sale traffic",
+      "author": "sana.iyer.dev",
+      "merged_at": "2026-09-17T11:20:00.000Z",
+      "merged_by": "priya.nair",
+      "reviews": [
+        {
+          "reviewer": "priya.nair",
+          "state": "APPROVED"
+        }
+      ],
+      "approvals_at_merge": 1,
+      "note": "UNRELATED noise PR; properly reviewed; merged ~3h before incident"
+    }
+  ]
+}

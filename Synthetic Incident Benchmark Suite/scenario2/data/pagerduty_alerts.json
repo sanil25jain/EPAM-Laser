@@ -1,0 +1,42 @@
+[
+  {
+    "id": "PD-R1S2T3",
+    "title": "[SEV2] api-gateway 5xx error rate > 5% (Datadog monitor 7712001)",
+    "service": "checkout-availability",
+    "urgency": "high",
+    "triggered_at": "2026-10-08T09:12:42.000Z",
+    "acknowledged_at": "2026-10-08T09:15:05.000Z",
+    "acknowledged_by": "meera.iyer",
+    "resolved_at": "2026-10-08T10:05:20.000Z",
+    "timeline": [
+      {
+        "ts": "2026-10-08T09:12:42.000Z",
+        "event": "triggered"
+      },
+      {
+        "ts": "2026-10-08T09:15:05.000Z",
+        "event": "acknowledged by meera.iyer"
+      },
+      {
+        "ts": "2026-10-08T09:18:40.000Z",
+        "event": "IC sana.qureshi engaged"
+      },
+      {
+        "ts": "2026-10-08T09:26:40.000Z",
+        "event": "dmitri.volkov joined"
+      },
+      {
+        "ts": "2026-10-08T10:05:20.000Z",
+        "event": "resolved"
+      }
+    ]
+  },
+  {
+    "id": "PD-R4U5V6",
+    "title": "[INFO] redis evictions warn (auto-resolved)",
+    "service": "redis-cache",
+    "urgency": "low",
+    "triggered_at": "2026-10-08T08:58:30.000Z",
+    "note": "decoy"
+  }
+]

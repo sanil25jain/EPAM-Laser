@@ -1,0 +1,312 @@
+[
+  {
+    "id": "SLK-0001",
+    "ts": "1791449370.000001",
+    "iso": "2026-10-08T08:49:30.000Z",
+    "channel": "#deployments",
+    "user": "github-bot",
+    "text": "PR #1998 merged into main (2 approvals): PAY-455 HttpClient bump",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0002",
+    "ts": "1791449530.000002",
+    "iso": "2026-10-08T08:52:10.000Z",
+    "channel": "#deployments",
+    "user": "argocd-bot",
+    "text": "payment-adapter (prod) Synced 5a1e9c3 -> v2.8.1 Healthy",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0003",
+    "ts": "1791450008.000003",
+    "iso": "2026-10-08T09:00:08.000Z",
+    "channel": "#vendor-mgmt",
+    "user": "statuspage-bot",
+    "text": "PayGate: Scheduled maintenance in progress. Impact: none expected. (window 09:00-11:00 UTC)",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0004",
+    "ts": "1791450762.000004",
+    "iso": "2026-10-08T09:12:42.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "pagerduty-bot",
+    "text": "TRIGGERED SEV2: api-gateway 5xx error rate > 5% (Datadog monitor 7712001)",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0005",
+    "ts": "1791450905.000005",
+    "iso": "2026-10-08T09:15:05.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "meera.iyer",
+    "text": "Ack.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0006",
+    "ts": "1791450990.000006",
+    "iso": "2026-10-08T09:16:30.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "meera.iyer",
+    "text": "502s only on /checkout/submit. payment-adapter logs show SSLHandshakeException. We shipped payment-adapter 2.8.1 at 08:52 with the HttpClient bump, I suspect it changed TLS behaviour. Rolling back.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0007",
+    "ts": "1791451030.000007",
+    "iso": "2026-10-08T09:17:10.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "karan.malhotra",
+    "text": "2.8.1 got two approvals and passed integration tests vs the PayGate sandbox. PayGate status page is all green too.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0008",
+    "ts": "1791451120.000008",
+    "iso": "2026-10-08T09:18:40.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "sana.qureshi",
+    "text": "I'm IC. Customer impact? ETA?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0009",
+    "ts": "1791451160.000009",
+    "iso": "2026-10-08T09:19:20.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "neha.kapoor",
+    "text": "Support: 250+ contacts, 'payment failed at checkout', mostly card payments.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0010",
+    "ts": "1791451210.000010",
+    "iso": "2026-10-08T09:20:10.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "tara.menon",
+    "text": "PayGate has been flaky all week, I kept seeing timeouts on the dashboard. Probably them.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0011",
+    "ts": "1791451300.000011",
+    "iso": "2026-10-08T09:21:40.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "meera.iyer",
+    "text": "Starting rollback of payment-adapter to 2.8.0 now.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0012",
+    "ts": "1791451515.000012",
+    "iso": "2026-10-08T09:25:15.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "meera.iyer",
+    "text": "Rollback complete (09:23:30). Error rate unchanged. Odd.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0013",
+    "ts": "1791451600.000013",
+    "iso": "2026-10-08T09:26:40.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "Joining. 'PKIX path building failed' is a trust-chain problem, not an HttpClient problem. Checking the chain from a pod.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0014",
+    "ts": "1791451750.000014",
+    "iso": "2026-10-08T09:29:10.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "From a payment-adapter pod: Verify return code: 20 (unable to get local issuer certificate), issuer 'PayGate Issuing CA G3'. From the bastion with a current bundle + R2: return code 0. Leaf is valid (not before Oct 7, not after Jan 5), so this is NOT expiry. Our truststore is a baked JKS with only R1/G2.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0015",
+    "ts": "1791451805.000015",
+    "iso": "2026-10-08T09:30:05.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "Errors started 09:04 and only on 203.0.113.41, then .42 at ~09:11, .43 at ~09:17, .44 at ~09:24. It's a rolling change on PayGate's edges, not something we deployed.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0016",
+    "ts": "1791451840.000016",
+    "iso": "2026-10-08T09:30:40.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "isha.bose",
+    "text": "I never received any notice from PayGate about a certificate change.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0017",
+    "ts": "1791451870.000017",
+    "iso": "2026-10-08T09:31:10.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "karan.malhotra",
+    "text": "I vaguely remember an email from PayGate about TLS changes a while back?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0018",
+    "ts": "1791451900.000018",
+    "iso": "2026-10-08T09:31:40.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "tara.menon",
+    "text": "Enabled checkout.cod_only flag to keep orders flowing (cash-on-delivery) while we fix.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0019",
+    "ts": "1791452000.000019",
+    "iso": "2026-10-08T09:33:20.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "isha.bose",
+    "text": "Found it. Two notices (Aug 24 and Sep 24) sent to payments-vendor-alerts@, the shared mailbox Sunil owned. He left in June, nobody monitors it. They said pinned/custom truststores must add Root R2 before Oct 8.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0020",
+    "ts": "1791452050.000020",
+    "iso": "2026-10-08T09:34:10.000Z",
+    "channel": "#paygate-shared",
+    "user": "leo.fischer",
+    "text": "Maintenance was announced and no customer action is expected for standard clients. Are you pinning a truststore?",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0021",
+    "ts": "1791452100.000021",
+    "iso": "2026-10-08T09:35:00.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "We need R2 in the truststore. But I don't want to trust a root downloaded from a random URL, need the fingerprint verified out of band first.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0022",
+    "ts": "1791452190.000022",
+    "iso": "2026-10-08T09:36:30.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "karan.malhotra",
+    "text": "Downloaded R2 from pki.paygate.example. SHA-256: 4A:49:75:24:E0:A5:B4:B7:93:4F:06:D9:B5:5E:5D:76:6C:17:66:E4:95:8D:7F:DE:1D:6C:81:CD:C0:DD:99:E0",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0023",
+    "ts": "1791452360.000023",
+    "iso": "2026-10-08T09:39:20.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "isha.bose",
+    "text": "PayGate support (ticket PGS-88213) confirmed R2 fingerprint by phone and ticket. Matches: 4A:49:75:24:E0:A5:B4:B7:93:4F:06:D9:B5:5E:5D:76:6C:17:66:E4:95:8D:7F:DE:1D:6C:81:CD:C0:DD:99:E0",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0024",
+    "ts": "1791452450.000024",
+    "iso": "2026-10-08T09:40:50.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "PR #2011: put R2 in a ConfigMap-mounted truststore and point -Djavax.net.ssl.trustStore at it. Need a quick review.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0025",
+    "ts": "1791452610.000025",
+    "iso": "2026-10-08T09:43:30.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "priya.nair",
+    "text": "Approved #2011.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0026",
+    "ts": "1791452680.000026",
+    "iso": "2026-10-08T09:44:40.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "Merged. ArgoCD will sync shortly.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0027",
+    "ts": "1791453050.000027",
+    "iso": "2026-10-08T09:50:50.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "dmitri.volkov",
+    "text": "4/4 payment-adapter pods on the new truststore. Handshake errors at zero.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0028",
+    "ts": "1791453180.000028",
+    "iso": "2026-10-08T09:53:00.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "sana.qureshi",
+    "text": "Gateway 5xx back to baseline. Watching.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0029",
+    "ts": "1791453570.000029",
+    "iso": "2026-10-08T09:59:30.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "tara.menon",
+    "text": "Disabling checkout.cod_only now that cards work.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0030",
+    "ts": "1791453920.000030",
+    "iso": "2026-10-08T10:05:20.000Z",
+    "channel": "#inc-2026-1008-payments",
+    "user": "sana.qureshi",
+    "text": "Resolved. PIR PAY-470. Topics: vendor notice routing, truststore automation, muted monitor, vendor TLS handshake monitor.",
+    "thread_ts": null,
+    "reactions": []
+  },
+  {
+    "id": "SLK-0031",
+    "ts": "1791454080.000031",
+    "iso": "2026-10-08T10:08:00.000Z",
+    "channel": "#payments-eng",
+    "user": "karan.malhotra",
+    "text": "FYI 2.8.1 was not the cause. Rollback to 2.8.0 did not help; it was PayGate's new chain (Root R2).",
+    "thread_ts": null,
+    "reactions": []
+  }
+]

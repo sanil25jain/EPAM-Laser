@@ -1,0 +1,104 @@
+{
+  "ct_log": [
+    {
+      "id": "CT-001",
+      "logged_at": "2026-10-07T21:14:09Z",
+      "subject": "CN=api.paygate.example",
+      "issuer": "CN=PayGate Issuing CA G3",
+      "not_before": "2026-10-07T21:00:00Z",
+      "not_after": "2027-01-05T21:00:00Z",
+      "note": "first public sighting of new leaf; ~11.8h before edge .41 switched"
+    }
+  ],
+  "edge_chain_observations": [
+    {
+      "edge": "203.0.113.41",
+      "old_chain": [
+        "api.paygate.example (G2)",
+        "PayGate Issuing CA G2",
+        "PayGate Root R1"
+      ],
+      "new_chain": [
+        "api.paygate.example (G3)",
+        "PayGate Issuing CA G3",
+        "PayGate Global Root R2"
+      ],
+      "first_seen_new_chain": "2026-10-08T09:04:00.000Z",
+      "scanner": "datadog-synthetics-tls (1-min cadence)"
+    },
+    {
+      "edge": "203.0.113.42",
+      "old_chain": [
+        "api.paygate.example (G2)",
+        "PayGate Issuing CA G2",
+        "PayGate Root R1"
+      ],
+      "new_chain": [
+        "api.paygate.example (G3)",
+        "PayGate Issuing CA G3",
+        "PayGate Global Root R2"
+      ],
+      "first_seen_new_chain": "2026-10-08T09:11:00.000Z",
+      "scanner": "datadog-synthetics-tls (1-min cadence)"
+    },
+    {
+      "edge": "203.0.113.43",
+      "old_chain": [
+        "api.paygate.example (G2)",
+        "PayGate Issuing CA G2",
+        "PayGate Root R1"
+      ],
+      "new_chain": [
+        "api.paygate.example (G3)",
+        "PayGate Issuing CA G3",
+        "PayGate Global Root R2"
+      ],
+      "first_seen_new_chain": "2026-10-08T09:17:00.000Z",
+      "scanner": "datadog-synthetics-tls (1-min cadence)"
+    },
+    {
+      "edge": "203.0.113.44",
+      "old_chain": [
+        "api.paygate.example (G2)",
+        "PayGate Issuing CA G2",
+        "PayGate Root R1"
+      ],
+      "new_chain": [
+        "api.paygate.example (G3)",
+        "PayGate Issuing CA G3",
+        "PayGate Global Root R2"
+      ],
+      "first_seen_new_chain": "2026-10-08T09:24:00.000Z",
+      "scanner": "datadog-synthetics-tls (1-min cadence)"
+    }
+  ],
+  "fingerprints_sha256": {
+    "root_r1": "1E:51:80:F3:83:A5:DC:F3:1A:E2:39:E5:99:9F:8E:6B:C8:92:8C:D7:BB:C6:C4:7D:C0:C5:96:70:3D:00:9D:14",
+    "issuing_g2": "1C:49:D1:19:73:02:D0:E4:AF:7D:AD:50:35:65:40:59:FA:FF:ED:5B:CE:60:FF:BE:83:A3:13:B9:57:16:8E:89",
+    "root_r2": "4A:49:75:24:E0:A5:B4:B7:93:4F:06:D9:B5:5E:5D:76:6C:17:66:E4:95:8D:7F:DE:1D:6C:81:CD:C0:DD:99:E0",
+    "issuing_g3": "7D:65:EA:86:42:D8:6B:90:ED:FB:7A:83:84:CE:06:93:39:C4:21:D1:0C:F6:B4:85:E3:AB:1A:B7:9F:6D:78:24"
+  },
+  "captures": [
+    {
+      "id": "CAP-001",
+      "ts": "2026-10-08T09:28:50.000Z",
+      "where": "payment-adapter pod (v2.8.0, truststore R1 only)",
+      "cmd": "openssl s_client -connect api.paygate.example:443 -servername api.paygate.example -CAfile /app/ca.pem",
+      "output": "depth=0 CN = api.paygate.example\nverify error:num=20:unable to get local issuer certificate\nIssuer: CN = PayGate Issuing CA G3\nVerify return code: 20 (unable to get local issuer certificate)"
+    },
+    {
+      "id": "CAP-002",
+      "ts": "2026-10-08T09:29:05.000Z",
+      "where": "ops bastion (current OS CA bundle + R2 added manually)",
+      "cmd": "openssl s_client -connect api.paygate.example:443 -servername api.paygate.example",
+      "output": "depth=2 CN = PayGate Global Root R2  (sha256 4A:49:75:24:E0:A5:B4:B7:93:4F:06:D9:B5:5E:5D:76:6C:17:66:E4:95:8D:7F:DE:1D:6C:81:CD:C0:DD:99:E0)\nVerify return code: 0 (ok)\nNot Before: Oct 7 21:00:00 2026 GMT  Not After: Jan 5 21:00:00 2027 GMT"
+    },
+    {
+      "id": "CAP-003",
+      "ts": "2026-10-08T09:12:00.000Z",
+      "where": "datadog-synthetics (public)",
+      "cmd": "https check api.paygate.example/health",
+      "output": "200 OK, TLS ok with public trust store"
+    }
+  ]
+}

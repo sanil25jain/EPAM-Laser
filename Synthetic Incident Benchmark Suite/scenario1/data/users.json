@@ -1,0 +1,66 @@
+[
+  {
+    "id": "arjun.mehta",
+    "name": "Arjun Mehta",
+    "role": "Software Engineer II (Checkout)",
+    "tenure_years": 1.5,
+    "seniority": "mid",
+    "has_prod_admin_bypass": false
+  },
+  {
+    "id": "priya.nair",
+    "name": "Priya Nair",
+    "role": "Senior Software Engineer, Checkout CODEOWNER",
+    "tenure_years": 5,
+    "seniority": "senior",
+    "has_prod_admin_bypass": false
+  },
+  {
+    "id": "vikram.rao",
+    "name": "Vikram Rao",
+    "role": "Engineering Manager, Checkout",
+    "tenure_years": 7,
+    "seniority": "manager",
+    "has_prod_admin_bypass": true
+  },
+  {
+    "id": "rahul.verma",
+    "name": "Rahul Verma",
+    "role": "SRE (primary on-call)",
+    "tenure_years": 1,
+    "seniority": "junior",
+    "has_prod_admin_bypass": false
+  },
+  {
+    "id": "meera.iyer",
+    "name": "Meera Iyer",
+    "role": "Senior SRE",
+    "tenure_years": 6,
+    "seniority": "senior",
+    "has_prod_admin_bypass": false
+  },
+  {
+    "id": "dmitri.volkov",
+    "name": "Dmitri Volkov",
+    "role": "Staff Engineer, Platform",
+    "tenure_years": 8,
+    "seniority": "staff",
+    "has_prod_admin_bypass": false
+  },
+  {
+    "id": "sana.qureshi",
+    "name": "Sana Qureshi",
+    "role": "Incident Commander (duty manager)",
+    "tenure_years": 4,
+    "seniority": "manager",
+    "has_prod_admin_bypass": false
+  },
+  {
+    "id": "neha.kapoor",
+    "name": "Neha Kapoor",
+    "role": "Customer Support Lead",
+    "tenure_years": 3,
+    "seniority": "lead",
+    "has_prod_admin_bypass": false
+  }
+]

@@ -1,0 +1,392 @@
+{
+  "scenario_id": "S1-BAD-CONFIG-PUSH",
+  "incident_id": "INC-2026-0917",
+  "company": "ShopSphere (fictional)",
+  "incident_window_utc": {
+    "start": "2026-09-17T14:12:41.000Z",
+    "customer_impact_start": "2026-09-17T14:13:50.000Z",
+    "recovered": "2026-09-17T14:44:35.000Z",
+    "resolved": "2026-09-17T14:50:10.000Z"
+  },
+  "mttd_seconds": 161,
+  "mttr_seconds_from_first_crash": 1914,
+  "root_cause": {
+    "technical": "Typo in prod ConfigMap checkout-config: CHECKOUT_DB_POOL_MAX=5O (letter O) caused strconv.Atoi parse failure; hot-reload watcher exits fatally on invalid config, so every pod crashed then CrashLoopBackOff'd on restart.",
+    "organizational": "PR #1893 merged with branch-protection bypass (0/1 approvals) and Jira PLAT-4821 closed via admin override (skipped Code Review + QA) under sale-freeze time pressure.",
+    "latent_factors": [
+      "config-schema-validate CI job skipped due to path-filter bug (PLAT-4802)",
+      "schema validation for numeric config never prioritised (PLAT-4815)",
+      "ArgoCD reports Healthy for ConfigMaps",
+      "KubePodCrashLooping alert delayed 15 min and routed to low-urgency channel"
+    ]
+  },
+  "causal_dag": {
+    "nodes": [
+      {
+        "id": "N1",
+        "label": "Time-pressure decision to bypass review (sale freeze 15:00)",
+        "type": "organizational",
+        "time": "2026-09-17T14:05:30.000Z",
+        "evidence": [
+          "SLK-0004",
+          "JIRA-PLAT-4821"
+        ]
+      },
+      {
+        "id": "N2",
+        "label": "PR #1893 merged with 5O typo, 0 approvals, schema-validate skipped",
+        "type": "change",
+        "time": "2026-09-17T14:09:40.000Z",
+        "evidence": [
+          "GIT-PR-1893",
+          "DEP-002",
+          "DEP-003"
+        ]
+      },
+      {
+        "id": "N3",
+        "label": "ArgoCD syncs checkout-config rev 42 to prod",
+        "type": "deploy",
+        "time": "2026-09-17T14:11:32.000Z",
+        "evidence": [
+          "DEP-004",
+          "AUD-0001"
+        ]
+      },
+      {
+        "id": "N4",
+        "label": "Hot-reload fails parse; all pods exit(1)",
+        "type": "technical",
+        "time": "2026-09-17T14:12:41.212Z",
+        "evidence": [
+          "L008299",
+          "L008304"
+        ]
+      },
+      {
+        "id": "N5",
+        "label": "CrashLoopBackOff, 0/6 ready endpoints",
+        "type": "technical",
+        "time": "2026-09-17T14:14:07.911Z",
+        "evidence": [
+          "metrics:checkout-service/pods_ready",
+          "metrics:checkout-service/container_restarts_total"
+        ]
+      },
+      {
+        "id": "N6",
+        "label": "api-gateway 503/504 flood + retries",
+        "type": "symptom",
+        "time": "2026-09-17T14:12:45.000Z",
+        "evidence": [
+          "L008330",
+          "L008477",
+          "metrics:api-gateway/http_5xx_rate"
+        ]
+      },
+      {
+        "id": "N7",
+        "label": "Checkout success rate ~0%; gateway CPU 35->88% (retry storm)",
+        "type": "symptom",
+        "time": "2026-09-17T14:14:30.000Z",
+        "evidence": [
+          "metrics:checkout-service/success_rate",
+          "metrics:api-gateway/cpu_utilization"
+        ]
+      },
+      {
+        "id": "N8",
+        "label": "On-call investigates STAGING cluster (wrong kubectl context)",
+        "type": "mttr_contributor",
+        "time": "2026-09-17T14:17:42.000Z",
+        "evidence": [
+          "AUD-0002",
+          "SLK-0011",
+          "SLK-0024"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "N1",
+        "to": "N2",
+        "mechanism": "manager override of branch protection + Jira workflow",
+        "expected_lag_s": [
+          0,
+          600
+        ],
+        "check": "organizational record (GitHub bypass flag, Jira changelog)"
+      },
+      {
+        "from": "N2",
+        "to": "N3",
+        "mechanism": "GitOps auto-sync of merged commit",
+        "expected_lag_s": [
+          30,
+          180
+        ],
+        "check": "configmap_revision 41->42"
+      },
+      {
+        "from": "N3",
+        "to": "N4",
+        "mechanism": "kubelet ConfigMap volume propagation + fsnotify reload",
+        "expected_lag_s": [
+          20,
+          150
+        ],
+        "check": "first FATAL 69s after sync"
+      },
+      {
+        "from": "N4",
+        "to": "N5",
+        "mechanism": "restart reads same bad file; exponential backoff",
+        "expected_lag_s": [
+          0,
+          120
+        ],
+        "check": "pods_ready 6->0 within ~86s"
+      },
+      {
+        "from": "N5",
+        "to": "N6",
+        "mechanism": "no healthy upstream for checkout cluster",
+        "expected_lag_s": [
+          0,
+          30
+        ],
+        "check": "gateway 5xx divergence (z>3)"
+      },
+      {
+        "from": "N6",
+        "to": "N7",
+        "mechanism": "client/gateway retries amplify load; checkout unserved",
+        "expected_lag_s": [
+          10,
+          180
+        ],
+        "check": "gateway cpu_utilization and request_rate rise"
+      }
+    ]
+  },
+  "rejected_hypotheses": [
+    {
+      "id": "H-DB-BACKUP",
+      "claim": "Postgres snapshot backup at 14:10 caused outage (proposed by Meera)",
+      "why_plausible": "starts 2 min before first crash; pg connections drop",
+      "falsified_by": [
+        "backup finished 14:12:52 BEFORE checkout success rate fell (14:13:50)",
+        "lock_wait_count=0 and replication lag only 12ms",
+        "PLAT-4799: snapshot takes no locks",
+        "pg connections drop AFTER pods crash (effect, not cause)",
+        "inventory-service uses same DB and stayed healthy",
+        "L006519",
+        "L008443"
+      ]
+    },
+    {
+      "id": "H-PAYGATE",
+      "claim": "Third-party PayGate latency broke checkout",
+      "falsified_by": [
+        "PayGate latency recovered 14:12:05, before first crash",
+        "outage is 503 no-healthy-upstream, not payment timeouts",
+        "payment-adapter request_rate fell to 0 only after checkout died"
+      ]
+    },
+    {
+      "id": "H-BANNER-DEPLOY",
+      "claim": "marketing-banner-service v2.31.0 deploy caused errors",
+      "falsified_by": [
+        "no call path banner -> checkout in dependency graph",
+        "banner error rate unrelated; 404 on image asset only"
+      ]
+    },
+    {
+      "id": "H-INVENTORY-HPA",
+      "claim": "Inventory HPA scale-up (4->6) starved cluster",
+      "falsified_by": [
+        "inventory success unaffected",
+        "checkout pods crash with explicit config parse error, not eviction/OOM",
+        "no Pending/Evicted events"
+      ]
+    },
+    {
+      "id": "H-GATEWAY-CPU",
+      "claim": "api-gateway CPU saturation is the root cause",
+      "falsified_by": [
+        "gateway CPU rises AFTER 5xx onset (retry storm)",
+        "non-checkout routes stayed 200",
+        "topological demotion: anomalous ancestor exists upstream (checkout pods)"
+      ]
+    },
+    {
+      "id": "H-DB-FAILOVER",
+      "claim": "Postgres failover/connectivity issue",
+      "falsified_by": [
+        "pg healthy, CPU nominal",
+        "no failover events",
+        "connection drop equals the checkout share (~38 conns)"
+      ]
+    },
+    {
+      "id": "H-DEPLOY-IMAGE",
+      "claim": "Bad checkout-service image/code deploy",
+      "falsified_by": [
+        "deployment_generation constant (88), image 3.14.2 unchanged",
+        "rollout undo was a no-op and did not fix",
+        "only ConfigMap changed (rev 41->42)"
+      ]
+    }
+  ],
+  "human_testimony_claims": [
+    {
+      "claim_id": "C1",
+      "speaker": "rahul.verma",
+      "msg": "SLK-0013",
+      "claim": "Rolled back and restarted checkout-service",
+      "truth": "FALSE for prod: action was a rollout restart in STAGING; no prod change",
+      "refuted_by": [
+        "AUD-0004"
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "speaker": "rahul.verma",
+      "msg": "SLK-0011",
+      "claim": "Checkout pods healthy, 3/3 Running",
+      "truth": "FALSE for prod (6 replicas, 0 ready); TRUE for staging (3 replicas)",
+      "refuted_by": [
+        "AUD-0002",
+        "metrics:checkout-service/pods_ready"
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "speaker": "meera.iyer",
+      "msg": "SLK-0017",
+      "claim": "Snapshot backup caused DB-side outage",
+      "truth": "FALSE; later self-retracted",
+      "refuted_by": [
+        "L008443",
+        "metrics:postgres-orders/lock_wait_count"
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "speaker": "dmitri.volkov",
+      "msg": "SLK-0018",
+      "claim": "Root cause is config parse error",
+      "truth": "TRUE",
+      "supported_by": [
+        "L008299",
+        "DEP-004"
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "speaker": "arjun.mehta",
+      "msg": "SLK-0022",
+      "claim": "Priya said PR looked fine in standup",
+      "truth": "UNSUPPORTED; contradicted by PR review state and Priya",
+      "refuted_by": [
+        "GIT-PR-1893",
+        "SLK-0021"
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "speaker": "priya.nair",
+      "msg": "SLK-0021",
+      "claim": "Did not review PR #1893",
+      "truth": "TRUE",
+      "supported_by": [
+        "GIT-PR-1893 reviews=[]",
+        "JIRA-PLAT-4821 comments"
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "speaker": "arjun.mehta",
+      "msg": "SLK-0005",
+      "claim": "Staging looked fine",
+      "truth": "TRUE but irrelevant: staging overlay had valid value 50 (prod had 5O)",
+      "supported_by": [
+        "GIT-PR-1893 diff"
+      ]
+    }
+  ],
+  "mttr_contributors": [
+    {
+      "factor": "wrong kubectl context (staging)",
+      "approx_minutes_lost": 14,
+      "evidence": [
+        "AUD-0002",
+        "AUD-0004"
+      ]
+    },
+    {
+      "factor": "DB-backup anchoring by senior engineer",
+      "approx_minutes_lost": 10,
+      "evidence": [
+        "SLK-0017",
+        "SLK-0030"
+      ]
+    },
+    {
+      "factor": "rollout undo ineffective (config != deployment)",
+      "approx_minutes_lost": 2,
+      "evidence": [
+        "AUD-0007"
+      ]
+    },
+    {
+      "factor": "5-min CrashLoop backoff until pods deleted",
+      "approx_minutes_lost": 2,
+      "evidence": [
+        "SLK-0034"
+      ]
+    }
+  ],
+  "expected_log_templates": {
+    "anomalous_top": [
+      "config reload failed: invalid CHECKOUT_DB_POOL_MAX: strconv.Atoi: parsing <*>: invalid syntax",
+      "config validation failed: invalid CHECKOUT_DB_POOL_MAX: strconv.Atoi: parsing <*>: invalid syntax",
+      "fatal: unrecoverable config error, exiting with code 1",
+      "\"<*> <*> HTTP/1.1\" 503 UH ... detail=no_healthy_upstream req_id=<*>",
+      "retrying request attempt=<*>/3 cluster=checkout-service retry_on=connect-failure,5xx req_id=<*>"
+    ],
+    "note": "After Drain3 masking (numbers, hex ids, paths) 50,000 lines should collapse to ~20-40 templates; ~5 are anomalous with frequency spikes."
+  },
+  "evaluation_rubric": {
+    "must_identify_root_cause": "ConfigMap typo 5O -> parse failure -> fatal crash of all pods",
+    "must_identify_org_factor": "review bypass + Jira workflow override under time pressure",
+    "must_reject_at_least": 4,
+    "must_reject_set_min": [
+      "H-DB-BACKUP",
+      "H-GATEWAY-CPU",
+      "H-PAYGATE",
+      "H-DEPLOY-IMAGE"
+    ],
+    "must_flag_conflicts": [
+      "C1",
+      "C3/C4",
+      "C5/C6"
+    ],
+    "must_not_treat_staging_evidence_as_prod": true,
+    "timestamp_tolerance_s": 30,
+    "min_cited_evidence_per_edge": 1,
+    "cost_targets": {
+      "max_total_tokens": 60000,
+      "max_usd": 0.5,
+      "p95_latency_s": 120
+    },
+    "scoring": {
+      "root_cause_correct": 30,
+      "causal_chain_edges_f1": 20,
+      "decoys_rejected": 20,
+      "testimony_handled": 10,
+      "citations_valid": 10,
+      "budget_met": 10
+    }
+  }
+}

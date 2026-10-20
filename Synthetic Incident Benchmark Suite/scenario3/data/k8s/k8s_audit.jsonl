@@ -1,0 +1,2 @@
+{"id":"AUD-3001","ts":"2026-10-14T11:49:00.000Z","user":"karan.malhotra","verb":"patch","resource":"deployment","name":"checkout-service","namespace":"checkout","reason":"approved fix rollout"}
+{"id":"AUD-3002","ts":"2026-10-14T11:58:00.000Z","user":"argocd-bot","verb":"update","resource":"deployment","name":"checkout-service","namespace":"checkout","reason":"GitOps sync 3.18.1"}

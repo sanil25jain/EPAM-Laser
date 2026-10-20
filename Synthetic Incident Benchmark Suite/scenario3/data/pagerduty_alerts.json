@@ -1,0 +1,30 @@
+[
+  {
+    "id": "PD-INC-7718",
+    "incident_id": "INC-2026-1014",
+    "ts": "2026-10-14T11:13:00.000Z",
+    "status": "triggered",
+    "severity": "SEV1",
+    "title": "Checkout 5xx / timeout ratio above 10%",
+    "service": "checkout-service",
+    "acknowledged_by": "isha.bose",
+    "ack_ts": "2026-10-14T11:15:00.000Z"
+  },
+  {
+    "id": "PD-INC-7718-E2",
+    "incident_id": "INC-2026-1014",
+    "ts": "2026-10-14T11:25:00.000Z",
+    "status": "updated",
+    "severity": "SEV1",
+    "title": "Pool pending borrowers rising; checkout degraded",
+    "service": "checkout-service"
+  },
+  {
+    "id": "PD-INC-7718-R",
+    "incident_id": "INC-2026-1014",
+    "ts": "2026-10-14T12:09:00.000Z",
+    "status": "resolved",
+    "title": "Checkout error rate recovered",
+    "service": "checkout-service"
+  }
+]
